@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/include",
+                "/usr/include/wx-3.2",
+                "/usr/include/wx-3.2/wx",
+                "${workspaceFolder}/utils-WIN32/wxWidgetsWIN32/lib/wx/include/x86_64-w64-mingw32-msw-unicode-3.3",
+                "${workspaceFolder}/utils-WIN32/wxWidgetsWIN32/include/wx-3.3",
+                "/usr/include/dap",
+                "/usr/include/wine/windows"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-clang-x64",
+            "configurationProvider": "ms-vscode.cmake-tools"
+        }
+    ],
+    "version": 4
+}
