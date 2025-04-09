@@ -1,7 +1,7 @@
 #include "../../include/mainWindow.hpp"
 
 
-MainWindow::MainWindow(int width,int heigth,const std::string &title,const std::string &imagePath,wxBitmapType format)
+MainWindow::MainWindow(int width,int heigth,const std::string &title,const std::string &imagePath)
 : Window(width,heigth,title) , format(format),imagePath(imagePath){
     
     ILOG("(CLASS MainWindow)");
@@ -11,7 +11,7 @@ MainWindow::MainWindow(int width,int heigth,const std::string &title,const std::
     //wxStaticBitmap* staticBitmap = new wxStaticBitmap(this, wxID_ANY,bitmap, wxPoint(10, 10));
 
     //AUTO_IMAGE_READ(2)
-    //ImageReader img1(this,imagePath,wxBITMAP_TYPE_BMP);
+    //ImageReader img1(this,imagePath);
     
     //BRIGHTNESS OPERATION(3)
     /*
@@ -41,6 +41,7 @@ MainWindow::MainWindow(int width,int heigth,const std::string &title,const std::
     */
 
     //GRAYSCALE POINT OPERATION AND THRESHOLDING
+    /*
     GrayscaleOp grop(imagePath);
     grop.applyPointOperation();
     std::vector<uuchar> opImage = grop.getImage();
@@ -48,11 +49,22 @@ MainWindow::MainWindow(int width,int heigth,const std::string &title,const std::
 
     ThresholdOp thop(grop.getImageWidth(),grop.getImageHeight(),opImage,150);
     thop.applyPointOperation();
-
     
     //ImageReader img5(this,thop.getImage(),thop.getImageWidth(),thop.getImageHeight(),format);
-    ImageReader img1(this,imagePath,format);
+    */
+
+    //MEDIAN FILTER
+    BrightnessOp brop(imagePath,0);
+    brop.applyPointOperation();
+    std::vector<uuchar> opImage = brop.getImage();
+
+    MedianFilter mf(brop.getImageWidth(),brop.getImageHeight(),opImage);
+    mf.applyFilter();
+
+    ImageReader img2(this,mf.getFilteredImage(),brop.getImageWidth(),brop.getImageHeight());
     
+
+
 }
 
 MANUEL_IMAGE_READ wxBitmap MainWindow::loadImage(){

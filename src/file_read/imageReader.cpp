@@ -1,12 +1,12 @@
 #include "../../include/imageReader.hpp"
 
 //CONSTRUCTOR_1 GUI EKLEME
-ImageReader::ImageReader(wxFrame *wthis,const std::string &imagePath,wxBitmapType format)
+ImageReader::ImageReader(wxFrame *wthis,const std::string &imagePath)
 :imagePath(imagePath){
     wxInitAllImageHandlers();
 
     if(!wxFileExists(imagePath)) {
-        ELOG("DOSYA YOK " << imagePath);
+        ELOG("DOSYA YOK '" << imagePath << "'");
         return;
     }
 
@@ -30,12 +30,12 @@ ImageReader::ImageReader(wxFrame *wthis,const std::string &imagePath,wxBitmapTyp
                                                      );
 }
 
-ImageReader::ImageReader(const std::string &imagePath,wxBitmapType format)
+ImageReader::ImageReader(const std::string &imagePath)
 :imagePath(imagePath){
     wxInitAllImageHandlers();
 
     if(!wxFileExists(imagePath)) {
-        ELOG("DOSYA YOK " << imagePath);
+        ELOG("DOSYA YOK '" << imagePath << "'");
         return;
     }
 
@@ -58,15 +58,9 @@ ImageReader::ImageReader(const std::string &imagePath,wxBitmapType format)
 }
 
 ImageReader::ImageReader(wxFrame *wthis,const std::vector<uuchar> imageData,
-    int imageWidth , int imageHeight,wxBitmapType format)
+    int imageWidth , int imageHeight)
     : imageWidth(imageWidth) , imageHeight(imageHeight), imageRawData(imageData){
         wxInitAllImageHandlers();
-
-        if(!wxFileExists(imagePath)) {
-            ELOG("DOSYA YOK " << imagePath);
-            return;
-        }
-
     
         wxImage image(imageWidth, imageHeight, const_cast<uuchar*>(imageRawData.data()), true);
     

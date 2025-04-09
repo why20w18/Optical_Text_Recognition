@@ -5,7 +5,7 @@ class MyApp : public wxApp {
 public:
     virtual bool OnInit() override {
         system("pwd");
-        Window* mainWin = new MainWindow(640, 480,"Pencere",IMAGE2,wxBITMAP_TYPE_ANY);
+        Window* mainWin = new MainWindow(640, 480,"Pencere","../images/1.bmp");
         mainWin->Show();
         return true;
     }

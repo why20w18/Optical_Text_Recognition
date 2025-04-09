@@ -19,12 +19,12 @@ private:
 
 
 public:
-    ImageReader(wxFrame *wthis,const std::string &imagePath,wxBitmapType format = wxBITMAP_TYPE_BMP);
+    ImageReader(wxFrame *wthis,const std::string &imagePath);
     ImageReader(wxFrame *wthis,const std::vector<uuchar> imageData,
-        int imageWidth , int imageHeight,wxBitmapType format = wxBITMAP_TYPE_BMP);
+        int imageWidth , int imageHeight);
     
 
-    ImageReader(const std::string &imagePath,wxBitmapType format = wxBITMAP_TYPE_BMP);
+    ImageReader(const std::string &imagePath);
     
 
     std::vector<uuchar> getImageData();

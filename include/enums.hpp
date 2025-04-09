@@ -10,6 +10,11 @@ enum FILE_FORMAT : int{
     JPEG_FILE_FORMAT ,
 };
 
+enum FILTER_KERNEL{
+    KERNEL_3x3 = 1,
+    KERNEL_5x5 = 2,
+    KERNEL_7x7 = 3 //r yaricapi kernelin
+};
 
 
 

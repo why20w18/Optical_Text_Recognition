@@ -18,7 +18,7 @@ private:
     wxBitmapType format;  
 
 public:
-    MainWindow(int width,int heigth,const std::string &title,const std::string &imagePath,wxBitmapType format = wxBITMAP_TYPE_BMP);
+    MainWindow(int width,int heigth,const std::string &title,const std::string &imagePath);
     wxBitmap loadImage();
     
 };
