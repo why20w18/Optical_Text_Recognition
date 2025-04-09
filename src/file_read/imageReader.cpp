@@ -1,10 +1,16 @@
 #include "../../include/imageReader.hpp"
 
 //CONSTRUCTOR_1 GUI EKLEME
-ImageReader::ImageReader(wxFrame *wthis,const std::string &imagePath,wxBitmapType format,int channel)
-:channel(channel) , imagePath(imagePath){
+ImageReader::ImageReader(wxFrame *wthis,const std::string &imagePath,wxBitmapType format)
+:imagePath(imagePath){
     wxInitAllImageHandlers();
-    wxImage image(imagePath.c_str(), format);
+
+    if(!wxFileExists(imagePath)) {
+        ELOG("DOSYA YOK " << imagePath);
+        return;
+    }
+
+    wxImage image(imagePath.c_str(), wxBITMAP_TYPE_ANY);
 
     if(!image.IsOk()){
         ELOG("GORUNTU YUKLENEMEDI (CLASS ImageReader-1)");
@@ -14,7 +20,7 @@ ImageReader::ImageReader(wxFrame *wthis,const std::string &imagePath,wxBitmapTyp
     this->imageHeight = image.GetHeight();
     this->imageWidth = image.GetWidth();
     uuchar *RawData = image.GetData();
-    this->imageSize = channel * imageHeight * imageWidth;
+    this->imageSize = 3 * imageHeight * imageWidth;
     
     this->imageRawData = std::vector<uuchar>(RawData,RawData+imageSize);
 
@@ -24,10 +30,19 @@ ImageReader::ImageReader(wxFrame *wthis,const std::string &imagePath,wxBitmapTyp
                                                      );
 }
 
-ImageReader::ImageReader(const std::string &imagePath,wxBitmapType format,int channel )
-:channel(channel) , imagePath(imagePath){
+ImageReader::ImageReader(const std::string &imagePath,wxBitmapType format)
+:imagePath(imagePath){
     wxInitAllImageHandlers();
-    wxImage image(imagePath.c_str(), format);
+
+    if(!wxFileExists(imagePath)) {
+        ELOG("DOSYA YOK " << imagePath);
+        return;
+    }
+
+
+    wxImage image(imagePath.c_str(), wxBITMAP_TYPE_ANY);
+
+    
 
     if(!image.IsOk()){
         ELOG("GORUNTU YUKLENEMEDI (CLASS ImageReader-2)");
@@ -37,26 +52,25 @@ ImageReader::ImageReader(const std::string &imagePath,wxBitmapType format,int ch
     this->imageHeight = image.GetHeight();
     this->imageWidth = image.GetWidth();
     uuchar *RawData = image.GetData();
-    this->imageSize = channel * imageHeight * imageWidth;
+    this->imageSize = 3 * imageHeight * imageWidth;
     
     this->imageRawData = std::vector<uuchar>(RawData,RawData+imageSize);
 }
 
 ImageReader::ImageReader(wxFrame *wthis,const std::vector<uuchar> imageData,
-    int imageWidth , int imageHeight,wxBitmapType format,int channel )
-    : channel(channel) , imageWidth(imageWidth) , imageHeight(imageHeight), imageRawData(imageData){
-
-
+    int imageWidth , int imageHeight,wxBitmapType format)
+    : imageWidth(imageWidth) , imageHeight(imageHeight), imageRawData(imageData){
         wxInitAllImageHandlers();
 
-        if (channel != 3) {
-            ELOG("SADECE 3 KANALLI (RGB) DESTEKLENIYOR (CLASS ImageReader-3)");
+        if(!wxFileExists(imagePath)) {
+            ELOG("DOSYA YOK " << imagePath);
             return;
         }
+
     
         wxImage image(imageWidth, imageHeight, const_cast<uuchar*>(imageRawData.data()), true);
     
-        if (!image.IsOk()) {
+        if (!image.IsOk()){
             ELOG("GORUNTU YUKLENEMEDI (CLASS ImageReader-3)");
             return;
         }

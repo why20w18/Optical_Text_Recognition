@@ -21,7 +21,7 @@ protected:
 public:
     //non virtual method def
     static std::tuple<int,int,std::vector<uuchar>> getImageDatas(const std::string &imagePath,wxBitmapType format=wxBITMAP_TYPE_BMP,int channel=3){
-        ImageReader imread(imagePath,format,channel);
+        ImageReader imread(imagePath,format);
         int imageWidth = imread.getImageWidth();
         int imageHeight = imread.getImageHeight();
         std::vector<uuchar> imageData = imread.getImageData();

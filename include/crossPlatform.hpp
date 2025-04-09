@@ -11,7 +11,7 @@ typedef unsigned long uulong;
 
 
 #define IMAGE1 "../images/1.bmp"
-#define IMAGE2 "../images/2.jpg"
+#define IMAGE2 "../images/2.jpeg"
 
 
     #ifdef _WIN32

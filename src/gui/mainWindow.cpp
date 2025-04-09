@@ -1,7 +1,7 @@
 #include "../../include/mainWindow.hpp"
 
 
-MainWindow::MainWindow(int width,int heigth,const std::string &title,const std::string &imagePath,FILE_FORMAT format)
+MainWindow::MainWindow(int width,int heigth,const std::string &title,const std::string &imagePath,wxBitmapType format)
 : Window(width,heigth,title) , format(format),imagePath(imagePath){
     
     ILOG("(CLASS MainWindow)");
@@ -50,12 +50,13 @@ MainWindow::MainWindow(int width,int heigth,const std::string &title,const std::
     thop.applyPointOperation();
 
     
-    ImageReader img5(this,thop.getImage(),thop.getImageWidth(),thop.getImageHeight());
-  
+    //ImageReader img5(this,thop.getImage(),thop.getImageWidth(),thop.getImageHeight(),format);
+    ImageReader img1(this,imagePath,format);
+    
 }
 
 MANUEL_IMAGE_READ wxBitmap MainWindow::loadImage(){
-    FileOperation fo(imagePath,format);
-    wxBitmap bitmap = fo.getWxBitmap();
-    return bitmap;
+    //FileOperation fo(imagePath,format);
+    //wxBitmap bitmap = fo.getWxBitmap();
+    //return bitmap;
 }

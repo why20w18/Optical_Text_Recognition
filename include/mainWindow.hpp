@@ -15,10 +15,10 @@
 class MainWindow : public Window{
 private:
     std::string imagePath;  
-    FILE_FORMAT format;  
+    wxBitmapType format;  
 
 public:
-    MainWindow(int width,int heigth,const std::string &title,const std::string &imagePath,FILE_FORMAT format);
+    MainWindow(int width,int heigth,const std::string &title,const std::string &imagePath,wxBitmapType format = wxBITMAP_TYPE_BMP);
     wxBitmap loadImage();
     
 };
