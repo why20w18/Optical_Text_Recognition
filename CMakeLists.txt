@@ -29,22 +29,31 @@ SET(
     ${DIZIN_SRC}/file_read/imageReader.cpp
 
     ${DIZIN_SRC}/point_operation/brightnessOperation.cpp
+    ${DIZIN_SRC}/point_operation/thresholdOperation.cpp
+    ${DIZIN_SRC}/point_operation/grayscaleOperation.cpp
+
+    ${DIZIN_SRC}/filter_operation/medianFilter.cpp
 
 )
 
 SET(
     PROGRAM_INCLUDE
+    ${DIZIN_INCLUDE}/image_manuel_header/manuelFileOperation.hpp
     ${DIZIN_INCLUDE}/image_manuel_header/bmpHeader.hpp
     
     ${DIZIN_INCLUDE}/window.hpp
     ${DIZIN_INCLUDE}/mainWindow.hpp
 
-    ${DIZIN_INCLUDE}/manuelFileOperation.hpp
     ${DIZIN_INCLUDE}/imageReader.hpp
 
     #nokta operasyonlari goruntu uzerinde
     ${DIZIN_INCLUDE}/point_operation/pointOperation.hpp 
     ${DIZIN_INCLUDE}/point_operation/brightnessOperation.hpp
+    ${DIZIN_INCLUDE}/point_operation/thresholdOperation.hpp
+    ${DIZIN_INCLUDE}/point_operation/grayscaleOperation.hpp
+    
+    #filtre operasyonlari
+    ${DIZIN_INCLUDE}/filter_operation/medianFilter.hpp
 
 
     ${DIZIN_INCLUDE}/crossPlatform.hpp

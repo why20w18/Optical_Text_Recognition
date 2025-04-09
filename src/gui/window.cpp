@@ -4,6 +4,9 @@ Window::Window(int width , int height,const std::string &title)
 : wxFrame(nullptr,wxID_ANY,title,wxDefaultPosition,wxSize(width,height)){
     ILOG("'"<< title << "' ADLI PENCERE OLUSTURULDU (CLASS Window)");
 
+    SetMaxSize(wxSize(width+100,height+100));
+    SetMinSize(wxSize(width-50,height-50));
+
 }
 
 

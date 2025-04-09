@@ -3,10 +3,14 @@
 
 #include "window.hpp"
 #include "enums.hpp"
-#include "manuelFileOperation.hpp"
 #include "imageReader.hpp"
 
+#include "image_manuel_header/manuelFileOperation.hpp"
+
 #include "point_operation/brightnessOperation.hpp"
+#include "point_operation/thresholdOperation.hpp"
+#include "point_operation/grayscaleOperation.hpp"
+#include "filter_operation/medianFilter.hpp"
 
 class MainWindow : public Window{
 private:

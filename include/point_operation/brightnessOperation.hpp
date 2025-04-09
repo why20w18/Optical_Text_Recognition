@@ -5,13 +5,12 @@
 
 class BrightnessOp : public PointOperation{
 private:
-    std::vector<uuchar> imageData;
-    int imageWidth;
-    int imageHeight;
     int brightVal;
     
 public:
     BrightnessOp(const std::string &imagePath,int brightVal);
+    BrightnessOp(int imageWidth,int imageHeight,std::vector<uuchar> &imageData,int brightVal);
+    
     void applyPointOperation() override;
     std::vector<uuchar> getImage() override;
     int getImageWidth() override;

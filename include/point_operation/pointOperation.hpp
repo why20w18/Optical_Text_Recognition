@@ -7,6 +7,9 @@
 
 class PointOperation{
 protected:
+    std::vector<uuchar> imageData;
+    int imageWidth;
+    int imageHeight;
 
     virtual ~PointOperation() = default;
     virtual void applyPointOperation() = 0;

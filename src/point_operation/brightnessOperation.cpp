@@ -3,9 +3,18 @@
 BrightnessOp::BrightnessOp(const std::string &imagePath,int brightVal)
 :brightVal(brightVal){
     std::tie(this->imageWidth,this->imageHeight,this->imageData) = PointOperation::getImageDatas(imagePath);
-    ILOG("BrightnessOP : " << imageWidth << " , " << imageHeight);
+    ILOG("BrightnessOP-1 : " << imageWidth << " , " << imageHeight);
+}
+
+BrightnessOp::BrightnessOp(int imageWidth,int imageHeight,std::vector<uuchar> &imageData,int brightVal)
+:brightVal(brightVal){
+    this->imageWidth = imageWidth;
+    this->imageHeight = imageHeight;
+    this->imageData = imageData;
+    ILOG("BrightnessOP-2 : " << imageWidth << " , " << imageHeight);
 
 }
+
 
 void BrightnessOp::applyPointOperation(){
     int totalPixel = imageWidth * imageHeight;

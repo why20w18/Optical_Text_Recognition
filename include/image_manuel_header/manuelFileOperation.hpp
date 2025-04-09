@@ -1,11 +1,11 @@
 #ifndef __FILE_OPERATION_HPP__
 #define __FILE_OPERATION_HPP__
 
-#include "enums.hpp"
-#include "image_manuel_header/bmpHeader.hpp"
+#include "../enums.hpp"
+#include "bmpHeader.hpp"
 
-#include "debug.hpp"
-#include "crossPlatform.hpp"
+#include "../debug.hpp"
+#include "../crossPlatform.hpp"
 
 #include <fstream> //ifstream-ofstream-fstream
 #include <string>
