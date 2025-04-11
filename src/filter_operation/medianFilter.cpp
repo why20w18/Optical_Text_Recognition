@@ -1,25 +1,57 @@
 #include "../../include/filter_operation/medianFilter.hpp"
+#include "../../include/debug.hpp"
 
-MedianFilter::MedianFilter(int imageWidth,int imageHeight,std::vector<uuchar> &imageData,FILTER_KERNEL kernel357)
-:imageWidth(imageWidth) , imageHeight(imageHeight),kernel357(kernel357){
+MedianFilter::MedianFilter(int imageWidth,int imageHeight,std::vector<uuchar> &imageData,KERNEL_APPLY_COUNT applyCount,
+                           FILTER_KERNEL kernel357){
+    
     this->filteredImage = imageData;
+    this->imageWidth = imageWidth;
+    this->imageHeight = imageHeight;
+    this->applyCount = applyCount;
+    this->kernel357 =kernel357;
+    ILOG("");
 }
 
 void MedianFilter::applyFilter(){
-    //windowRGB == KERNEL
-
-    switch(kernel357){
-        case KERNEL_3x3:
-        filterSizeWindow3x3();
-        break;
-
-        case KERNEL_5x5:
-
-        break;
-
-        case KERNEL_7x7:
-
-        break;
+    std::vector<uuchar> resultImage = filteredImage;
+    
+    //ana goruntunun disina cikmayalim diye filtrenin yaricapini cikartip
+    //sadece merkez piksellerde hareket etmek icin
+    //x ve y merkez pikselin konumu
+    int i = 0;
+    while(i < applyCount){
+        ILOG("MedianFilter HESAPLANIYOR MEVCUT LOOP = " << i+1);
+        for(int y = kernel357 ; y < imageHeight - kernel357 ; y++){
+            for(int x = kernel357 ; x < imageWidth -kernel357 ; x++){
+                std::vector<uuchar> filterWindowRed;
+                std::vector<uuchar> filterWindowGreen;
+                std::vector<uuchar> filterWindowBlue;
+    
+                //yaricap uzerinden filtre kernelinin icinde gezme ve koorinatlari cikartma
+                for(int gezici_y = -kernel357 ; gezici_y <= kernel357 ; gezici_y++){
+                    for(int gezici_x = -kernel357 ; gezici_x <= kernel357 ; gezici_x++){
+                        int komsu_x = x + gezici_x;
+                        int komsu_y = y + gezici_y;
+                        
+                        //satir * goruntu genisligi + bulundugu konum
+                        //y=satir x=kolon
+                        int currentPixelLocation = (komsu_y * imageWidth + komsu_x) *3;
+                        
+                        filterWindowRed.push_back(filteredImage[currentPixelLocation +0]);  //red
+                        filterWindowGreen.push_back(filteredImage[currentPixelLocation +1]);//green
+                        filterWindowBlue.push_back(filteredImage[currentPixelLocation +2]); //blue
+                    }
+                }
+    
+                int locIndex = (y*imageWidth+x) *3;
+                resultImage[locIndex+0] = getFilterMedian(filterWindowRed,kernel357);
+                resultImage[locIndex+1] = getFilterMedian(filterWindowGreen,kernel357);
+                resultImage[locIndex+2] = getFilterMedian(filterWindowBlue,kernel357);
+            }
+        }
+    
+        filteredImage = resultImage;
+        i++;
     }
 }
 
@@ -41,77 +73,6 @@ int MedianFilter::getFilterMedian(std::vector<uuchar> &filterWindow,FILTER_KERNE
         break;
     }
     return filterWindow[medianIndex];
-}
-
-void MedianFilter::filterSizeWindow3x3(){
-    std::vector<uuchar> resultImage = filteredImage;
-    for(int y = KERNEL_3x3 ; y < imageHeight - KERNEL_3x3 ; y++){
-        for(int x = KERNEL_3x3 ; x < imageWidth - KERNEL_3x3 ; x++){
-            std::vector<uuchar> windowR;
-            std::vector<uuchar> windowG;
-            std::vector<uuchar> windowB;    
-
-            //PENCERENIN ICINI GEZME yani olusturulan pencereyi kaydirma
-            for (int dy = -KERNEL_3x3; dy <= KERNEL_3x3; dy++) { //y hareket ettirme
-                for (int dx = -KERNEL_3x3; dx <= KERNEL_3x3; dx++) { //x hareket ettirme
-                    int nx = x + dx;
-                    int ny = y + dy;
-                    int index = (ny * imageWidth + nx) * 3; //RGB
-
-                    windowR.push_back(filteredImage[index + 0]);
-                    windowG.push_back(filteredImage[index + 1]);
-                    windowB.push_back(filteredImage[index + 2]);
-                }
-            }
-
-
-            int outIndex = (y * imageWidth + x) * 3;
-            resultImage[outIndex + 0] = getFilterMedian(windowR, KERNEL_3x3);
-            resultImage[outIndex + 1] = getFilterMedian(windowG, KERNEL_3x3);
-            resultImage[outIndex + 2] = getFilterMedian(windowB, KERNEL_3x3);
-        }
-    }
-
-    filteredImage = resultImage;
-    /*
-    +yani sebebi merkez üzerinden kaydırmaya devam etmek istememiz mi ?
-    -evet cunku kenarlara gidersek bu sefer dista kalir yani resmin disina erismemek istiyoruz bu sebeple
-    1 kala baslayip 1 kala bitiriyoruz
-    */
-    /*
-    (y-1,x-1)  (y-1,x)  (y-1,x+1)
-    (y  ,x-1)  (y  ,x)  (y  ,x+1)
-    (y+1,x-1)  (y+1,x)  (y+1,x+1)
-    */
-
-/*
-1, 0, 1 Arası Kaydırma
-Bu kaydırmanın yatay (x) ve dikey (y) iki bileşeni vardır.
-
-dy = -KERNEL_3x3; dy <= KERNEL_3x3; dy++ ile yapılan işlem, pencereyi dikey yönde kaydırmaktır.
-Yani, yukarı ve aşağıya doğru hareket etmeyi ifade eder.
-dy = -1 demek, pencerenin bir piksel yukarıya kaymasıdır.
-dy = 0 demek, pencerenin merkezdeki pikselin olduğu yeri gösterir (yani şu an pencereyi tam o pikselin üzerinde tutuyoruz).
-dy = 1 demek, pencerenin bir piksel aşağıya kaymasıdır.
-
-dx = -KERNEL_3x3; dx <= KERNEL_3x3; dx++ ile yapılan işlem, pencereyi yatay yönde kaydırmaktır. 
-Yani, sola ve sağa doğru hareket etmeyi ifade eder.
-dx = -1 demek, pencerenin bir piksel sola kaymasıdır.
-dx = 0 demek, pencerenin merkezdeki pikselin olduğu yeri gösterir (yani şu an pencereyi tam o pikselin üzerinde tutuyoruz).
-dx = 1 demek, pencerenin bir piksel sağa kaymasıdır.
-
-dy ve dx değerlerinin -1, 0 ve 1 olması, pencerenin merkezini sabit tutarak, onu yukarı-aşağı ve sola-sağa doğru 
-kaydırmamızı sağlar.Pencereyi kaydırırken, merkezdeki pikseli her zaman değiştirecek şekilde hareket ediyoruz.
-
-Bu kaydırma işlemi, pencerenin etrafındaki pikselleri toplar ve bunlar üzerinden medyan değeri hesaplanarak, 
-merkezdeki pikselin yeni değeri belirlenir.
-
-
-*/
-}
-
-void MedianFilter::filterSizeWindow7x7(){
-
 }
 
 std::vector<uuchar> MedianFilter::getFilteredImage(){

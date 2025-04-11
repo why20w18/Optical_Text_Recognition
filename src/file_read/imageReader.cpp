@@ -1,7 +1,7 @@
 #include "../../include/imageReader.hpp"
 
 //CONSTRUCTOR_1 GUI EKLEME
-ImageReader::ImageReader(wxFrame *wthis,const std::string &imagePath)
+ImageReader::ImageReader(Window *wthis,const std::string &imagePath)
 :imagePath(imagePath){
     wxInitAllImageHandlers();
 
@@ -28,6 +28,9 @@ ImageReader::ImageReader(wxFrame *wthis,const std::string &imagePath)
     wxStaticBitmap* staticBitmap = new wxStaticBitmap(wthis,wxID_ANY, bitmap, wxPoint(10, 10), 
                                                       wxSize(imageWidth,imageHeight)
                                                      );
+
+   wthis->componentPosition(staticBitmap,SOL);
+    
 }
 
 ImageReader::ImageReader(const std::string &imagePath)
@@ -57,7 +60,7 @@ ImageReader::ImageReader(const std::string &imagePath)
     this->imageRawData = std::vector<uuchar>(RawData,RawData+imageSize);
 }
 
-ImageReader::ImageReader(wxFrame *wthis,const std::vector<uuchar> imageData,
+ImageReader::ImageReader(Window *wthis,const std::vector<uuchar> imageData,
     int imageWidth , int imageHeight)
     : imageWidth(imageWidth) , imageHeight(imageHeight), imageRawData(imageData){
         wxInitAllImageHandlers();
@@ -70,7 +73,7 @@ ImageReader::ImageReader(wxFrame *wthis,const std::vector<uuchar> imageData,
         }
     
         wxBitmap bitmap(image);
-        new wxStaticBitmap(wthis, wxID_ANY, bitmap, wxPoint(10, 10), wxSize(imageWidth, imageHeight));
+        wxStaticBitmap* staticBitmap = new wxStaticBitmap(wthis, wxID_ANY, bitmap, wxPoint(10, 10), wxSize(imageWidth, imageHeight));
 }
 
 

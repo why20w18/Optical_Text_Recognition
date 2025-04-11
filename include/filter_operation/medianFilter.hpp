@@ -1,26 +1,18 @@
 #ifndef __MEDIAN_FILTER_HPP__
 #define __MEDIAN_FILTER_HPP__
 
-#include <vector>
-#include <algorithm>
-#include "../crossPlatform.hpp"
-#include "../enums.hpp"
+#include "filterOperation.hpp"
 
-class MedianFilter{
+class MedianFilter : public FilterOperation{
 private:
-    int imageWidth , imageHeight;
-    FILTER_KERNEL kernel357;
-    std::vector<uuchar> filteredImage;
-   
-
     int getFilterMedian(std::vector<uuchar> &filterWindow,FILTER_KERNEL kernel357=KERNEL_3x3);
-    void filterSizeWindow3x3();
-    void filterSizeWindow7x7();
 
 public:
-    MedianFilter(int imageWidth,int imageHeight,std::vector<uuchar> &imageData,FILTER_KERNEL kernel357=KERNEL_3x3);
-    void applyFilter();
-    std::vector<uuchar> getFilteredImage();
+    MedianFilter(int imageWidth,int imageHeight,std::vector<uuchar> &imageData,KERNEL_APPLY_COUNT
+                 applyCount=APPLY_1,FILTER_KERNEL kernel357=KERNEL_3x3);
+    
+    void applyFilter() override;
+    std::vector<uuchar> getFilteredImage() override;
 };
 
 #endif //__MEDIAN_FILTER_HPP__

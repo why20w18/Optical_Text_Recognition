@@ -3,12 +3,16 @@
 
 GrayscaleOp::GrayscaleOp(const std::string &imagePath){
     std::tie(this->imageWidth,this->imageHeight,this->imageData) = PointOperation::getImageDatas(imagePath);
+    ILOG("GrayscaleOp-1 : " << imageWidth << " , " << imageHeight);
+
 }
 
 GrayscaleOp::GrayscaleOp(int imageWidth,int imageHeight,std::vector<uuchar> &imageData){
     this->imageWidth = imageWidth;
     this->imageHeight = imageHeight;
     this->imageData = imageData;
+    ILOG("GrayscaleOp-2 : " << imageWidth << " , " << imageHeight);
+
 }
 
 void GrayscaleOp::applyPointOperation(){

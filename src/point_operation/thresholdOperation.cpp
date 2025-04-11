@@ -4,7 +4,7 @@
 ThresholdOp::ThresholdOp(const std::string &imagePath,int threshold,int minThreshold , int maxThreshold)
 : threshold(threshold) , minThreshold(minThreshold) , maxThreshold(maxThreshold){
     std::tie(this->imageWidth,this->imageHeight,this->imageData) = PointOperation::getImageDatas(imagePath);
-    //ILOG("ThrehsoldOp-1 : " << imageWidth << " , " << imageHeight);
+    ILOG("ThrehsoldOp-1 : " << imageWidth << " , " << imageHeight);
 }
 
 ThresholdOp::ThresholdOp(int imageWidth,int imageHeight,std::vector<uuchar> &imageData,int threshold,
@@ -13,7 +13,7 @@ ThresholdOp::ThresholdOp(int imageWidth,int imageHeight,std::vector<uuchar> &ima
     this->imageWidth = imageWidth;
     this->imageHeight = imageHeight;
     this->imageData = imageData;
-    //ILOG("ThrehsoldOp-2 : " << imageWidth << " , " << imageHeight);
+    ILOG("ThrehsoldOp-2 : " << imageWidth << " , " << imageHeight);
 }
 
 void ThresholdOp::applyPointOperation(){

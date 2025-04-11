@@ -33,6 +33,9 @@ SET(
     ${DIZIN_SRC}/point_operation/grayscaleOperation.cpp
 
     ${DIZIN_SRC}/filter_operation/medianFilter.cpp
+    
+    ${DIZIN_SRC}/ocr/rowDetect.cpp
+    ${DIZIN_SRC}/ocr/characterDetect.cpp
 
 )
 
@@ -53,8 +56,12 @@ SET(
     ${DIZIN_INCLUDE}/point_operation/grayscaleOperation.hpp
     
     #filtre operasyonlari
+    ${DIZIN_INCLUDE}/filter_operation/filterOperation.hpp
     ${DIZIN_INCLUDE}/filter_operation/medianFilter.hpp
 
+    #ocr operasyonlari
+    ${DIZIN_INCLUDE}/ocr/rowDetect.hpp
+    ${DIZIN_INCLUDE}/ocr/characterDetect.hpp
 
     ${DIZIN_INCLUDE}/crossPlatform.hpp
     ${DIZIN_INCLUDE}/debug.hpp

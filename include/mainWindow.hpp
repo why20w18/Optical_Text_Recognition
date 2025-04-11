@@ -5,6 +5,8 @@
 #include "enums.hpp"
 #include "imageReader.hpp"
 
+#include "ocr/rowDetect.hpp"
+
 #include "image_manuel_header/manuelFileOperation.hpp"
 
 #include "point_operation/brightnessOperation.hpp"
@@ -21,6 +23,7 @@ public:
     MainWindow(int width,int heigth,const std::string &title,const std::string &imagePath);
     wxBitmap loadImage();
     
+    void OnSaveButton(wxCommandEvent &event,int width,int height,std::vector<uuchar> imageData,std::string image);
 };
 
 

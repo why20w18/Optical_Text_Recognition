@@ -5,7 +5,7 @@ class MyApp : public wxApp {
 public:
     virtual bool OnInit() override {
         system("pwd");
-        Window* mainWin = new MainWindow(640, 480,"Pencere","../images/1.bmp");
+        Window* mainWin = new MainWindow(720, 540,"Pencere",METIN_GOOGLE_PNG);
         mainWin->Show();
         return true;
     }

@@ -19,8 +19,8 @@ private:
 
 
 public:
-    ImageReader(wxFrame *wthis,const std::string &imagePath);
-    ImageReader(wxFrame *wthis,const std::vector<uuchar> imageData,
+    ImageReader(Window *wthis,const std::string &imagePath);
+    ImageReader(Window *wthis,const std::vector<uuchar> imageData,
         int imageWidth , int imageHeight);
     
 
