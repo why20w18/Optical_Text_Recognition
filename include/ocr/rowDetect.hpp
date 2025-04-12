@@ -5,25 +5,43 @@
 #include "../debug.hpp"
 
 #include <vector>
+#include <map>
 
 class RowDetect{
 private:
     std::vector<std::vector<uuchar>> image2D;
-    std::vector<uuchar> preprocessedImage;
+    std::vector<uuchar> signedImage;
+    std::vector<uuchar> orgImg;
 
     std::vector<std::vector<int>> RowStartEnd;
 
     //y ekseni == satirNo ve textin baslangic ~ bitis koordinatlarini barindirir
-    std::vector<std::vector<int>> TextLocationRows; //{{rowNo-startLine-endLine}} sadece text olan satirlar
+    //y ekseniNo,textBaslangicKolonu,textBitisKolonu
+    std::vector<std::vector<int>> TextLocationCols; //{{rowNo-startLine-endLine}} sadece text olan satirlar
+    std::vector<int> firstWhite;
+    std::vector<int> lastBlack;
+    
+    
 
     int imageWidth , imageHeight;
+
+    void rightDetect();
+    void textDetect();
+
+    void firstWhiteLoc();
+    void lastBlackAfterWhite();
+
 
 
 public:
     RowDetect(int imageWidth,int imageHeight,std::vector<uuchar> &preprocessedImage);
-    std::vector<std::vector<int>> &getTextLocationRows();
+    std::vector<std::vector<int>> &getTextLocationCols();
 
     void ArrayConvert1Dto2D();
+
+    std::vector<uuchar> getResultRight();
+    std::vector<uuchar> getResult();
+
 
 };
 

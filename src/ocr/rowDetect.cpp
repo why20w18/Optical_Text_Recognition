@@ -3,11 +3,71 @@
 RowDetect::RowDetect(int imageWidth, int imageHeight, std::vector<uuchar> &preprocessedImage){
     this->imageWidth = imageWidth;
     this->imageHeight = imageHeight;
-    this->preprocessedImage = preprocessedImage;
+    this->signedImage = preprocessedImage;
+    this->orgImg = preprocessedImage;
+    this->RowStartEnd = std::vector<std::vector<int>>(imageHeight, std::vector<int>(2, -1));
+
+    firstWhiteLoc();
+    //lastBlackAfterWhite();
+
+    rightDetect();
+
+    for(int i = 0 ; i < firstWhite.size() - 1 ; i++)
+        ILOG("row : " << i << " value : " << firstWhite[i]);
+    
+        
+    
+ 
+    
+}
+
+void RowDetect::textDetect(){   
+    //TextLocationCols baslangicini alicagiz
+    //ilk beyaz noktayi bulacagiz
+    //ilk beyaz nokta ile textlocationcols arasini cizecegiz
+
+}
+
+void RowDetect::firstWhiteLoc() {
+    firstWhite.clear();
+    firstWhite.resize(imageHeight, -1);  
+
+    int totalPixel = imageWidth * imageHeight;
+
+    for (int i = 0; i < totalPixel; i++) {
+        int row = i / imageWidth;  
+        int col = i % imageWidth;  
+        int idx = i * 3;  
+
+        if (orgImg[idx] == 255 && orgImg[idx + 1] == 255 && orgImg[idx + 2] == 255 && firstWhite[row] == -1) {
+            firstWhite[row] = i;  // Bu satırdaki ilk beyazın kolonunu kaydet
+        }
+    }
+    
+    for (int row = 0; row < imageHeight; row++) {
+        if (firstWhite[row] == -1) {
+            ILOG("Satır " << row << " için beyaz piksel bulunamadı.");
+        }
+    }
+}
+
+void RowDetect::lastBlackAfterWhite(){
+    lastBlack.clear();
+    lastBlack.resize(imageHeight, -1);  
+
+    int totalPixel = imageWidth * imageHeight;
+
+
+}
+
+
+
+
+
+void RowDetect::rightDetect(){
     int totalPixel = imageWidth*imageHeight;
     
     //2d matris
-    this->RowStartEnd = std::vector<std::vector<int>>(imageHeight, std::vector<int>(2, -1));
     
     int rowCount = 0;
     int currentLineStart = -1;
@@ -30,7 +90,7 @@ RowDetect::RowDetect(int imageWidth, int imageHeight, std::vector<uuchar> &prepr
         }
 
         //siyah piksel kontrolu
-        if(preprocessedImage[locPixel + 0] == 0 && preprocessedImage[locPixel + 1] == 0 && preprocessedImage[locPixel + 2] == 0) {
+        if(signedImage[locPixel + 0] == 0 && signedImage[locPixel + 1] == 0 && signedImage[locPixel + 2] == 0) {
             if(!isStart){//satir basiysa kayit
                 currentLineStart = i;
                 isStart = true;
@@ -44,35 +104,73 @@ RowDetect::RowDetect(int imageWidth, int imageHeight, std::vector<uuchar> &prepr
                 isStart = false;
             }
         }
-        ILOG("row-" << rowCount << " start-" << currentLineStart << " , end-" << currentLineEnd);
+        //ILOG("row-" << rowCount << " start-" << currentLineStart << " , end-" << currentLineEnd);
     }
 
     //son satir
     if(isStart){
         RowStartEnd[rowCount][1] = currentLineEnd;
     }
-
-
-    for(int i = 0; i < imageHeight; i++){
-        ILOG("row - " << i << " : "<< RowStartEnd[i][0] << " <-> " << RowStartEnd[i][1] << " --> " << RowStartEnd[i][1]-RowStartEnd[i][0]);
-    }
 }
 
 void RowDetect::ArrayConvert1Dto2D(){
-    int z = 0;
     for (int i = 0; i < this->imageWidth; i++){
         for (int j = 0; j < this->imageHeight; j++){
-            this->image2D[i][j] = this->preprocessedImage[z++];
+            int z = i*imageWidth+j;
+            this->image2D[i][j] = this->signedImage[z];
         }
     }
 }
 
-std::vector<std::vector<int>> &RowDetect::getTextLocationRows(){
+
+std::vector<std::vector<int>> &RowDetect::getTextLocationCols(){
     for(int i = 0 ; i < imageHeight ; i++){
         if(RowStartEnd[i][1] - RowStartEnd[i][0] != imageWidth-1){
             //ILOG("FARK" << RowStartEnd[i][1] - RowStartEnd[i][0]);
-            this->TextLocationRows.push_back({i,RowStartEnd[i][0],RowStartEnd[i][1]});
+            this->TextLocationCols.push_back({i,RowStartEnd[i][0],RowStartEnd[i][1]});
         }
     }
-    return this->TextLocationRows;
+    return this->TextLocationCols;
+}
+
+std::vector<uuchar> RowDetect::getResultRight(){
+
+    for(const auto &row : TextLocationCols) {
+        int rowNum = row[0];
+        int startCol = row[1] % imageWidth;  
+        int endCol = row[2] % imageWidth;    
+        
+        for(int col = startCol; col <= endCol; col++) {
+            signedImage[(rowNum * imageWidth + col) * 3 + 0] = 255;  // R
+            signedImage[(rowNum * imageWidth + col) * 3 + 1] = 0;    // G
+            signedImage[(rowNum * imageWidth + col) * 3 + 2] = 0;    // B
+        }
+    }
+
+    return this->signedImage;
+}
+
+std::vector<uuchar> RowDetect::getResult() {
+    //get result right gibi calisacak ama 
+    //startCol firstWhitedaki doldurdugumuz ilk piksel
+    //endCol TextLocationCols 2.kolonu aliriz
+    //startCol ve endCol arasini kirmiziya boyamali
+
+    for (const auto &row : TextLocationCols) {
+        int rowNum = row[0];   
+        int startCol = firstWhite[rowNum] %imageWidth;  
+        int endCol = row[2] %imageHeight;    
+
+        
+        
+        
+            for (int col = startCol; col <= endCol; col++) {
+                signedImage[(rowNum * imageWidth + col) * 3 + 0] = 255;  // R
+                signedImage[(rowNum * imageWidth + col) * 3 + 1] = 0;    // G
+                signedImage[(rowNum * imageWidth + col) * 3 + 2] = 0;    // B
+            }
+        }
+    
+
+    return this->signedImage;
 }

@@ -66,13 +66,25 @@ MainWindow::MainWindow(int width,int heigth,const std::string &title,const std::
     //ImageReader img2(this,opImage,brop.getImageWidth(),brop.getImageHeight());
     */
 
-    ThresholdOp thop(imagePath,150);
+    GrayscaleOp grop(imagePath);
+    grop.applyPointOperation();
+    auto img = grop.getImage();
+    int imageWidth = grop.getImageWidth();
+    int imageHeight = grop.getImageHeight();
+
+    /*
+    MedianFilter mf(imageWidth,imageHeight,img,APPLY_3);
+    mf.applyFilter();
+    img = mf.getFilteredImage();
+    */
+
+    ThresholdOp thop(imageWidth,imageHeight,img,128);
     thop.applyPointOperation();
-    std::vector<uuchar> img = thop.getImage();
-    int imageWidth = thop.getImageWidth();
-    int imageHeight = thop.getImageHeight();
-    ImageReader img4(this,img,imageWidth,imageHeight);
+    img = thop.getImage();
+
+   
     
+   
 
     wxButton *saveButton = new wxButton(this,SAVE_BUTTON_MAIN,"Save Image");
     this->componentPosition(saveButton,SAG);
@@ -80,10 +92,20 @@ MainWindow::MainWindow(int width,int heigth,const std::string &title,const std::
     //Bind(wxEVT_BUTTON,&MainWindow::OnSaveButton,this);
     
     RowDetect rd(imageWidth,imageHeight,img);
-    auto textRows = rd.getTextLocationRows();
+    auto textStartEndCols = rd.getTextLocationCols();
+    img = rd.getResult();
 
 
-    ILOG(imageHeight << " BOYUTUNDA -->" << imageWidth);
+
+    for(const auto &r : textStartEndCols){
+        ILOG("row : " << r[0] << " sutunBaslangic :" << r[1] << " <-> sutunBitis : " << r[2]);
+    }
+    
+    
+    ILOG("Height : " << imageHeight << " Width : " << imageWidth);
+
+    ImageReader img4(this,img,imageWidth,imageHeight);
+    
 
     saveButton->Bind(wxEVT_BUTTON,
         [this,img,imageWidth,imageHeight,imagePath](wxCommandEvent &e){
@@ -103,7 +125,7 @@ void MainWindow::OnSaveButton(wxCommandEvent &event,int width,int height,std::ve
 
     wxImage image(width, height, const_cast<uuchar*>(imageData.data()), true);
 
-    if (!image.IsOk()) {
+    if(!image.IsOk()){
         ELOG("GORUNTU KAYDEDILEMEDI !" << imagePath);
         return;
     }
