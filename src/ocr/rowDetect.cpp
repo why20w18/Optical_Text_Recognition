@@ -21,12 +21,10 @@ RowDetect::RowDetect(int imageWidth, int imageHeight, std::vector<uuchar> &prepr
     
 }
 
-void RowDetect::textDetect(){   
     //TextLocationCols baslangicini alicagiz
     //ilk beyaz noktayi bulacagiz
     //ilk beyaz nokta ile textlocationcols arasini cizecegiz
 
-}
 
 void RowDetect::firstWhiteLoc() {
     firstWhite.clear();
@@ -135,12 +133,12 @@ std::vector<std::vector<int>> &RowDetect::getTextLocationCols(){
 
 std::vector<uuchar> RowDetect::getResultRight(){
 
-    for(const auto &row : TextLocationCols) {
+    for(const auto &row : TextLocationCols){
         int rowNum = row[0];
         int startCol = row[1] % imageWidth;  
         int endCol = row[2] % imageWidth;    
         
-        for(int col = startCol; col <= endCol; col++) {
+        for(int col = startCol; col <= endCol; col++){
             signedImage[(rowNum * imageWidth + col) * 3 + 0] = 255;  // R
             signedImage[(rowNum * imageWidth + col) * 3 + 1] = 0;    // G
             signedImage[(rowNum * imageWidth + col) * 3 + 2] = 0;    // B
@@ -150,13 +148,31 @@ std::vector<uuchar> RowDetect::getResultRight(){
     return this->signedImage;
 }
 
+
+std::vector<uuchar> RowDetect::getResultRight(std::vector<uuchar> &img){
+
+    for(const auto &row : TextLocationCols){
+        int rowNum = row[0];
+        int startCol = row[1] % imageWidth;  
+        int endCol = row[2] % imageWidth;    
+        
+        for(int col = startCol; col <= endCol; col++) {
+            img[(rowNum * imageWidth + col) * 3 + 0] = 255;  // R
+            img[(rowNum * imageWidth + col) * 3 + 1] = 0;    // G
+            img[(rowNum * imageWidth + col) * 3 + 2] = 0;    // B
+        }
+    }
+
+    return img;
+}
+
 std::vector<uuchar> RowDetect::getResult() {
     //get result right gibi calisacak ama 
     //startCol firstWhitedaki doldurdugumuz ilk piksel
     //endCol TextLocationCols 2.kolonu aliriz
-    //startCol ve endCol arasini kirmiziya boyamali
+    //startCol ve endCol arasini yesile boyamali
 
-    for (const auto &row : TextLocationCols) {
+    for(const auto &row : TextLocationCols){
         int rowNum = row[0];   
         int startCol = firstWhite[rowNum] %imageWidth;  
         int endCol = row[2] %imageHeight;    
@@ -164,9 +180,9 @@ std::vector<uuchar> RowDetect::getResult() {
         
         
         
-            for (int col = startCol; col <= endCol; col++) {
-                signedImage[(rowNum * imageWidth + col) * 3 + 0] = 255;  // R
-                signedImage[(rowNum * imageWidth + col) * 3 + 1] = 0;    // G
+            for(int col = startCol; col <= endCol; col++){
+                signedImage[(rowNum * imageWidth + col) * 3 + 0] = 0;  // R
+                signedImage[(rowNum * imageWidth + col) * 3 + 1] = 255;    // G
                 signedImage[(rowNum * imageWidth + col) * 3 + 2] = 0;    // B
             }
         }

@@ -1,11 +1,12 @@
 #include "../include/mainWindow.hpp"
 #include "../include/image_manuel_header/manuelFileOperation.hpp"
+#include "../include/crossPlatform.hpp"
 
 class MyApp : public wxApp {
 public:
     virtual bool OnInit() override {
         system("pwd");
-        Window* mainWin = new MainWindow(720, 540,"Pencere",METIN_PNG);
+        Window* mainWin = new MainWindow(720, 540,"Pencere","../images/metin.png");
         mainWin->Show();
         return true;
     }

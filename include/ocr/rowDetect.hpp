@@ -26,7 +26,6 @@ private:
     int imageWidth , imageHeight;
 
     void rightDetect();
-    void textDetect();
 
     void firstWhiteLoc();
     void lastBlackAfterWhite();
@@ -40,6 +39,7 @@ public:
     void ArrayConvert1Dto2D();
 
     std::vector<uuchar> getResultRight();
+    std::vector<uuchar> getResultRight(std::vector<uuchar> &img);
     std::vector<uuchar> getResult();
 
 

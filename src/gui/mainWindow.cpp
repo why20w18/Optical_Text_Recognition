@@ -59,31 +59,37 @@ MainWindow::MainWindow(int width,int heigth,const std::string &title,const std::
     brop.applyPointOperation();
     std::vector<uuchar> opImage = brop.getImage();
 
-    //MedianFilter mf(brop.getImageWidth(),brop.getImageHeight(),opImage,APPLY_10,KERNEL_7x7);
-    //mf.applyFilter();
+    MedianFilter mf(brop.getImageWidth(),brop.getImageHeight(),opImage,APPLY_10,KERNEL_7x7);
+    mf.applyFilter();
 
     ImageReader img2(this,mf.getFilteredImage(),brop.getImageWidth(),brop.getImageHeight());
     //ImageReader img2(this,opImage,brop.getImageWidth(),brop.getImageHeight());
     */
 
-    GrayscaleOp grop(imagePath);
-    grop.applyPointOperation();
-    auto img = grop.getImage();
-    int imageWidth = grop.getImageWidth();
-    int imageHeight = grop.getImageHeight();
+    BrightnessOp brop(imagePath,0);
+    auto img = brop.getImage();
+    int imageWidth = brop.getImageWidth();
+    int imageHeight = brop.getImageHeight();
 
-    /*
-    MedianFilter mf(imageWidth,imageHeight,img,APPLY_3);
-    mf.applyFilter();
+    
+    MedianFilter mf(imageWidth,imageHeight,img,APPLY_1,KERNEL_5x5);
+    //mf.applyFilter();
     img = mf.getFilteredImage();
-    */
-
-    ThresholdOp thop(imageWidth,imageHeight,img,128);
+    
+    
+    GrayscaleOp grop(imageWidth,imageHeight,img);
+    grop.applyPointOperation();
+    img = grop.getImage();
+    
+    ThresholdOp thop(imageWidth,imageHeight,img,150);
     thop.applyPointOperation();
     img = thop.getImage();
 
    
-    
+    RowDetect rd(imageWidth,imageHeight,img);
+    auto textStartEndCols = rd.getTextLocationCols();
+    img = rd.getResult();
+    //img = rd.getResultRight(img);
    
 
     wxButton *saveButton = new wxButton(this,SAVE_BUTTON_MAIN,"Save Image");
@@ -91,11 +97,6 @@ MainWindow::MainWindow(int width,int heigth,const std::string &title,const std::
 
     //Bind(wxEVT_BUTTON,&MainWindow::OnSaveButton,this);
     
-    RowDetect rd(imageWidth,imageHeight,img);
-    auto textStartEndCols = rd.getTextLocationCols();
-    img = rd.getResult();
-
-
 
     for(const auto &r : textStartEndCols){
         ILOG("row : " << r[0] << " sutunBaslangic :" << r[1] << " <-> sutunBitis : " << r[2]);
