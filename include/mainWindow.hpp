@@ -5,7 +5,13 @@
 #include "enums.hpp"
 #include "imageReader.hpp"
 
-#include "ocr/rowDetect.hpp"
+
+#include "detect/convert.hpp"
+#include "detect/textStartEnd.hpp"
+#include "detect/detectLine.hpp"
+
+
+//#include "ocr/rowDetect.hpp"
 //#include "ocr/characterDetect.hpp"
 
 #include "image_manuel_header/manuelFileOperation.hpp"

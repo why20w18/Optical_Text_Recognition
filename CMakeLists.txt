@@ -34,8 +34,13 @@ SET(
 
     ${DIZIN_SRC}/filter_operation/medianFilter.cpp
     
-    ${DIZIN_SRC}/ocr/rowDetect.cpp
+    #${DIZIN_SRC}/ocr/rowDetect.cpp
     #${DIZIN_SRC}/ocr/colStartEndDetect.cpp
+
+    ${DIZIN_SRC}/detect/convert.cpp
+    ${DIZIN_SRC}/detect/textStartEnd.cpp
+    ${DIZIN_SRC}/detect/detectLine.cpp
+
 
 )
 
@@ -60,8 +65,16 @@ SET(
     ${DIZIN_INCLUDE}/filter_operation/medianFilter.hpp
 
     #ocr operasyonlari
-    ${DIZIN_INCLUDE}/ocr/rowDetect.hpp
+    #${DIZIN_INCLUDE}/ocr/rowDetect.hpp
     #${DIZIN_INCLUDE}/ocr/colStartEndDetect.hpp
+    
+    ${DIZIN_INCLUDE}/detect/convert.hpp
+    ${DIZIN_INCLUDE}/detect/textStartEnd.hpp
+    ${DIZIN_INCLUDE}/detect/detectLine.hpp
+
+
+
+
 
     ${DIZIN_INCLUDE}/crossPlatform.hpp
     ${DIZIN_INCLUDE}/debug.hpp
