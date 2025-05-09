@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/archw/packs/imgProcess/include/debugOCR.hpp -I/home/archw/packs/imgProcess/include/opRandomMath.hpp -I/home/archw/packs/imgProcess/include/model/neuralNetwork.hpp -I/home/archw/packs/imgProcess/include/model/loadDataset.hpp -I/home/archw/packs/imgProcess/include/opPoint/bmpReader.hpp -I/home/archw/packs/imgProcess/include/opPoint/brightnessOperation.hpp -I/home/archw/packs/imgProcess/include/opPoint/thresholdOperation.hpp
+CXX_INCLUDES = -I/home/archw/packs/imgProcess/include/debugOCR.hpp -I/home/archw/packs/imgProcess/include/opRandomMath.hpp -I/home/archw/packs/imgProcess/include/modelProp.hpp -I/home/archw/packs/imgProcess/include/model/neuralNetwork.hpp -I/home/archw/packs/imgProcess/include/model/loadDataset.hpp -I/home/archw/packs/imgProcess/include/opPoint/bmpReader.hpp -I/home/archw/packs/imgProcess/include/opPoint/brightnessOperation.hpp -I/home/archw/packs/imgProcess/include/opPoint/thresholdOperation.hpp
 
-CXX_FLAGS = -O3 -DNDEBUG -Wextra -Wall -O3 -std=gnu++17
+CXX_FLAGS = -O3 -DNDEBUG -Wextra -Wall -O3 -march=native	-funroll-loops -ffast-math -fomit-frame-pointer -flto -std=gnu++17
 

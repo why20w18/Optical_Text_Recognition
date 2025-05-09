@@ -179,6 +179,7 @@ CMakeFiles/OCR_PROGRAM.dir/src/model/loadDataset.cpp.o: \
  /usr/include/c++/15.1.1/bits/stl_vector.h \
  /usr/include/c++/15.1.1/bits/stl_bvector.h \
  /usr/include/c++/15.1.1/bits/vector.tcc \
+ /home/archw/packs/imgProcess/src/model/../../include/model/../modelProp.hpp \
  /home/archw/packs/imgProcess/src/model/../../include/model/../debugOCR.hpp \
  /usr/include/c++/15.1.1/iostream \
  /home/archw/packs/imgProcess/src/model/../../include/model/../opPoint/bmpReader.hpp \

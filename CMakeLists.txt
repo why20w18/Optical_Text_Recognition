@@ -4,8 +4,10 @@ PROJECT(OCR_PROGRAM)
 #CXX STANDARTLARI VE COMPILE MODLARINI YAPILANDIRMA
 SET(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wextra -Wall -g")
-SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wextra -Wall -O3")
+SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wextra -Wall -O3 -march=native	-funroll-loops -ffast-math -fomit-frame-pointer -flto")
 
+#-fno-fast-math
+#-ffast-math
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_definitions(-DDEBUG)
@@ -36,6 +38,8 @@ SET(PROGRAM_INCLUDE
 
     ${DIZIN_INCLUDE}/debugOCR.hpp 
     ${DIZIN_INCLUDE}/opRandomMath.hpp
+    ${DIZIN_INCLUDE}/modelProp.hpp
+
 
     ${DIZIN_INCLUDE}/model/neuralNetwork.hpp
     ${DIZIN_INCLUDE}/model/loadDataset.hpp
@@ -44,6 +48,8 @@ SET(PROGRAM_INCLUDE
     ${DIZIN_INCLUDE}/opPoint/bmpReader.hpp
     ${DIZIN_INCLUDE}/opPoint/brightnessOperation.hpp
     ${DIZIN_INCLUDE}/opPoint/thresholdOperation.hpp
+
+
 
 )
 

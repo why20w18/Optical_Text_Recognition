@@ -5,13 +5,15 @@
 #include <random>
 
 class RandomMath{
+private:
+    static std::mt19937 gen;
 public:
-    
     static double sigmoidExp(double x);
     static double der_sigmoidExp(double x);
     static double derOut_sigmoidExp(double ox);
 
     static double getRandom(double start = -1 , double stop = 1);
+    static std::mt19937 getGenerator();
 
 
 };

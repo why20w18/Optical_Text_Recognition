@@ -1,5 +1,6 @@
 #include "../../include/opPoint/bmpReader.hpp"
 
+static int cx = 0;
 
 bmpReader::bmpReader(const std::string &filePath){
     file.open(filePath,std::ios::binary);
@@ -7,11 +8,13 @@ bmpReader::bmpReader(const std::string &filePath){
         DL("DOSYA ACILAMADI !");
     }
     else{
-        DL("DOSYA BASARIYLA ACILDI !");
+        if(cx % 50 == 0)
+            DL("DOSYA BASARIYLA ACILDI ! : NO_" << cx+1);
+        cx++;
     }
 }
 
-std::vector<double> bmpReader::readConvert(){
+std::vector<double> bmpReader::readConvert(bool normalized){
     //header okuma
     unsigned char header[TOTAL_HEADER];
     file.read(reinterpret_cast<char*>(header),TOTAL_HEADER);
@@ -31,7 +34,10 @@ std::vector<double> bmpReader::readConvert(){
         for(int col = 0; col < width; ++col){   //ilk sutun
             unsigned char pixel;                //seklinde okuyarak bmp ters olarak tutuyor vectore atma
             file.read(reinterpret_cast<char*>(&pixel),1);
+            if(!normalized)
             this->pixelData.emplace_back(static_cast<double>(pixel));
+            else
+            this->pixelData.emplace_back(static_cast<double>(pixel) / 255.0);
         }
     }
     

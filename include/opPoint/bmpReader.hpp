@@ -19,7 +19,7 @@ private:
     std::ifstream file;
 public:
     bmpReader(const std::string &filePath);
-    std::vector<double> readConvert();
+    std::vector<double> readConvert(bool normalized);
     
     int getWidth() override;
     int getHeight() override;

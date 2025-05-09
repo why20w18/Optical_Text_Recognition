@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include "../modelProp.hpp"
 #include "../debugOCR.hpp"
 #include "../opPoint/bmpReader.hpp"
 
@@ -15,7 +16,7 @@ private:
 
 public:    
     LoadDataset(const std::string &folderPath,std::vector<std::vector<double>> &inputDataRaw,
-        std::vector<std::vector<double>> &oneHotLabels,int outputClassCount = 2);
+        std::vector<std::vector<double>> &oneHotLabels,bool normalized,int outputClassCount = OUTPUT_LAYER);
     
     //std::vector<std::vector<double>> getInputDataRaw();
     //std::vector<std::vector<double>> getOneHotLabels();

@@ -132,4 +132,107 @@ double NeuralNetwork::toRound(double outputValue){
 }
 
 
-void NeuralNetwork::predictTest(){}
+void NeuralNetwork::printPredictTest(const std::vector<std::vector<double>> &inputDataRaw
+                               ,const std::vector<std::vector<double>> &oneHotLabels,
+                               int loopCount
+                            ){
+    
+    int correctCount = 0;
+    for(int i = 0; i < loopCount; i++){
+        forwardPropagation(inputDataRaw[i]);
+        
+        int predictedIndex = std::distance(output.begin(),std::max_element(output.begin(),output.end()));
+        int actualIndex = std::distance(oneHotLabels[i].begin(), std::max_element(oneHotLabels[i].begin(), oneHotLabels[i].end()));
+    
+        //tahminlerin ciktisi
+        printf("TAHMIN [%5d] | ",(i+1));
+        for(double val : this->output){
+            printf("(%3.4lf) ",val);
+        }
+
+        //one hot label => olmasi gereken
+        std::cout << " | GERCEK DEGER : ";
+        for(int j = 0 ; j < outputLayerSize ; j++)
+            printf("(%2.0lf) ",oneHotLabels[i][j]);
+
+        if(predictedIndex == actualIndex) {
+            std::cout << " TAM TAHMIN";
+            correctCount++;
+        }
+        else
+            std::cout << " HATALI TAHMIN";
+            std::cout << "\n";
+
+    }
+
+    double accuracy = 100.0 * correctCount / loopCount;
+    std::cout << "\nORAN: " << correctCount << "/" << loopCount
+              << " | DOGRULUK ORANI: %" << accuracy << std::endl;
+    
+
+}
+
+std::vector<double>& NeuralNetwork::getOutputs(){
+    return this->output;
+}
+
+void NeuralNetwork::predictImage(const std::string &pathfile,bool normalized){
+    DL("TAHMIN EDILECEK DOSYA : " << pathfile);
+    bmpReader reader(pathfile);
+    auto v = reader.readConvert(normalized);
+    forwardPropagation(v);
+
+    int predictIndex = std::distance(                   //indexi en buyuk olanin 
+        output.begin(),                                 //cikti vektorunun ilk iteratoru
+        std::max_element(output.begin(),output.end())   //cikti vektorunun icindeki en buyuk iterator
+    );
+
+    predictIndexSwitch(predictIndex);
+}
+
+void NeuralNetwork::predictImage(std::vector<double> rawImageData){
+    forwardPropagation(rawImageData);
+
+    int predictIndex = std::distance(                   //indexi en buyuk olanin 
+        output.begin(),                                 //cikti vektorunun ilk iteratoru
+        std::max_element(output.begin(),output.end())   //cikti vektorunun icindeki en buyuk iterator
+    );
+
+   predictIndexSwitch(predictIndex);
+}
+
+void NeuralNetwork::predictIndexSwitch(int predictIndex){
+    if (predictIndex >= 0 && predictIndex <= 25) {
+        char predictedChar = 'A' + predictIndex;
+        std::cout << predictedChar << "\n";
+    } else {
+        std::cerr << "KARAKTER TESPIT BASARISIZ!\n";
+    }
+    
+}
+
+
+void NeuralNetwork::fillRange(std::vector<int> &sortedVec,int startValue,int increment){
+    for(int i = 0 ; i < sortedVec.size() ; i ++){
+        sortedVec[i] = startValue + increment -1; 
+        increment++;
+    }
+}
+
+void NeuralNetwork::fit(const std::vector<std::vector<double>> &inputDataRaw,
+                        const std::vector<std::vector<double>> &oneHotLabels,int totalEpoch){
+    for(int epoch = 0; epoch < totalEpoch; ++epoch){
+        if(epoch % PRINT_COUNT == 0)
+            std::cout << "\nEPOCH: " << epoch+1 << "/" << totalEpoch << std::flush;
+
+    
+        std::vector<int> indices(inputDataRaw.size());
+        fillRange(indices,0);
+
+        std::shuffle(indices.begin(),indices.end(),RandomMath::getGenerator());
+    
+        for (int randomIndex : indices) {
+            train(inputDataRaw[randomIndex], oneHotLabels[randomIndex]);
+        }
+    }
+}

@@ -1,5 +1,7 @@
 #include "../include/opRandomMath.hpp"
 
+std::mt19937 RandomMath::gen(std::random_device{}());
+
 double RandomMath::sigmoidExp(double x){
     return 1.0f / (1.0f + exp(-x));
 }
@@ -14,7 +16,11 @@ double RandomMath::der_sigmoidExp(double x){
 
 
 double RandomMath::getRandom(double start , double stop){
-    static std::mt19937 gen(std::random_device{}());
     std::uniform_real_distribution<double> distr(start, stop);
     return distr(gen);
+}
+
+
+std::mt19937 RandomMath::getGenerator(){
+    return gen;
 }
