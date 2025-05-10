@@ -12,6 +12,11 @@ public:
     static double der_sigmoidExp(double x);
     static double derOut_sigmoidExp(double ox);
 
+    static double sigmoidRelu(double x);
+    static double derOut_sigmoidRelu(double ox);
+
+    
+
     static double getRandom(double start = -1 , double stop = 1);
     static std::mt19937 getGenerator();
 

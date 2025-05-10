@@ -20,7 +20,7 @@ enum PREDICT_CHARACTER {
 class NeuralNetwork{
 private:
     int inputLayerSize = 784; //28x28 piksel
-    int hiddenLayerSize = 16;
+    int hiddenLayerSize = HIDDEN_LAYER;
     int outputLayerSize = OUTPUT_LAYER;//2; //simdilik a ve b tespiti
     
     double learningRate;
@@ -36,7 +36,7 @@ private:
     std::vector<double> biasHidden;
     std::vector<double> biasOutput;
 
-    void predictIndexSwitch(int predictIndex);
+    void predictIndexSwitch(int predictIndex,std::vector<char> &text);
 
 public:
 
@@ -65,8 +65,8 @@ public:
     
     std::vector<double>& getOutputs();
 
-    void predictImage(const std::string &pathfile,bool normalized);
-    void predictImage(std::vector<double> rawImageData);
+    void predictImage(const std::string &pathfile,bool normalized,std::vector<char> &text);
+    void predictImage(std::vector<double> rawImageData,std::vector<char> &text);
 
     void fit(const std::vector<std::vector<double>> &inputDataRaw
             ,const std::vector<std::vector<double>> &oneHotLabels
@@ -74,6 +74,9 @@ public:
                 
     void fillRange(std::vector<int> &sortedVec,int startValue,int increment = 1);
     
+    void saveModel(); //
+    void loadModel(const std::string &path);
+
     template<typename T>
     void print1D(const std::vector<T> &v){
         for(int i = 0 ; i < v.size() ; i++)
@@ -92,5 +95,11 @@ public:
 #endif //__NEURAL_NETWORK_HPP__
 /*
 https://www.datacamp.com/tutorial/forward-propagation-neural-networks
+
+hidden layer size 16'dan 128'e cekildi:
+https://medium.com/geekculture/introduction-to-neural-network-2f8b8221fbd3
+https://medium.com/@sidharthgn/building-a-neural-network-from-scratch-solving-fashion-mnist-1ae456df9576
+
+
 
 */

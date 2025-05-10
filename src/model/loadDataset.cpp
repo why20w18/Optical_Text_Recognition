@@ -2,11 +2,12 @@
 
 
 LoadDataset::LoadDataset(const std::string &folderPath,std::vector<std::vector<double>> &inputDataRaw,
-                         std::vector<std::vector<double>> &oneHotLabels,bool normalized ,int outputClassCount) 
+                         std::vector<std::vector<double>> &oneHotLabels,bool normalized,bool thresholdRead ,int outputClassCount) 
 :folderPath(folderPath), outputClassCount(outputClassCount)
 {
-    
+
     for(const auto &file : std::filesystem::directory_iterator(folderPath)){
+/////////(1)EGITIM SETINDEN VERIYI OKUMA////////////
         //dosyanin yolu cikartildi
         std::string filePath = file.path().string();
         
@@ -16,27 +17,36 @@ LoadDataset::LoadDataset(const std::string &folderPath,std::vector<std::vector<d
             //ham bmp dosyası okundu ve 2D arraye eklendi
             bmpReader reader(filePath);
             auto rawPixels = reader.readConvert(normalized);
+            
+            if(thresholdRead){
+                ThresholdOp threshold(THRESHOLD_DATASET_USER_PARAMS,normalized);
+                threshold.initalize(rawPixels,reader.getWidth(),reader.getHeight());
+                threshold.applyPointOperation();
+                rawPixels = threshold.getRawPixelData();
+            }
+            
+
             inputDataRaw.push_back(rawPixels);
 
+/////////(2)ONE HOT LABEL DOLDURMA ISLEMI////////////
             //etiket cikartma islemi
             std::vector<double> labels(outputClassCount,0.0f);
 
-            // Dosya adından harfi çek (örneğin: "c_045.bmp" => 'c')
-            std::size_t pos = filePath.find_last_of("/\\"); // klasör yolunu ayır
+            std::size_t pos = filePath.find_last_of("/\\"); //filename
             std::string fileName = (pos == std::string::npos) ? filePath : filePath.substr(pos + 1);
             
-            // İlk karakter harf olmalı: "c_045.bmp" -> fileName[0] = 'c'
+            //ilk karakter harf degilse etiket cikartilamaz
             if (fileName.size() > 0 && std::isalpha(fileName[0])) {
-                char ch = std::tolower(fileName[0]); // büyük harf olursa küçük yap
-                int index = ch - 'a'; // 'a' => 0, 'b' => 1, ..., 'z' => 25
+                char ch = std::tolower(fileName[0]); 
+                int index = ch - 'a'; 
             
                 if (index >= 0 && index < 26) {
                     labels[index] = 1.0f;
                 } else {
-                    std::cerr << "[HATA] Geçersiz karakter etiketi: " << ch << "\n";
+                    std::cerr << "[HATA] GECERSIZ ETIKET " << ch << "\n";
                 }
             } else {
-                std::cerr << "[HATA] Dosya ismi etiketi tespit edilemedi: " << fileName << "\n";
+                std::cerr << "[HATA] ETIKETSIZ DOSYA ADI " << fileName << "\n";
             }
 
             oneHotLabels.push_back(labels);

@@ -8,6 +8,7 @@
 #include "../modelProp.hpp"
 #include "../debugOCR.hpp"
 #include "../opPoint/bmpReader.hpp"
+#include "../opPoint/thresholdOperation.hpp"
 
 class LoadDataset{
 private:
@@ -16,7 +17,7 @@ private:
 
 public:    
     LoadDataset(const std::string &folderPath,std::vector<std::vector<double>> &inputDataRaw,
-        std::vector<std::vector<double>> &oneHotLabels,bool normalized,int outputClassCount = OUTPUT_LAYER);
+        std::vector<std::vector<double>> &oneHotLabels,bool normalized,bool thresholdRead,int outputClassCount);
     
     //std::vector<std::vector<double>> getInputDataRaw();
     //std::vector<std::vector<double>> getOneHotLabels();

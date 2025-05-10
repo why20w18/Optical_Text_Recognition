@@ -24,3 +24,11 @@ double RandomMath::getRandom(double start , double stop){
 std::mt19937 RandomMath::getGenerator(){
     return gen;
 }
+
+double RandomMath::sigmoidRelu(double x){
+    return x > 0 ? x : 0;
+}
+
+double RandomMath::derOut_sigmoidRelu(double x){
+    return x > 0 ? 1.0 : 0.0;
+}

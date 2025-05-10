@@ -8,9 +8,10 @@ private:
     int minThreshold;
     int maxThreshold;
     int threshold;
+    bool isNormalize;
 
 public:
-    ThresholdOp(int threshold,int minThreshold = 0 , int maxThreshold = 255);
+    ThresholdOp(int threshold,bool isNormalize,int minThreshold = 0 , int maxThreshold = 255);
 
     int getWidth() override;
     int getHeight() override;

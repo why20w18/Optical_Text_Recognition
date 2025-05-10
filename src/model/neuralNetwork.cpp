@@ -1,6 +1,9 @@
 #include "../../include/model/neuralNetwork.hpp"
 
+#include <omp.h>
+
 NeuralNetwork::NeuralNetwork(double learningRate){
+    omp_set_num_threads(THREAD_COUNT);
     this->learningRate = learningRate;
 
     //(1) veri yapilarini dogru boyutlarda baslatma 2D arrayleri kurma
@@ -32,6 +35,10 @@ NeuralNetwork::NeuralNetwork(double learningRate){
             weightHidden_Output[i][j] = RandomMath::getRandom();
 
     DL("NEURAL NETWORK AGIRLIKLARI VE BIASLARI RANDOM SEKILDE BASLATILDI");
+    DL("INPUT  LAYER SIZE : " << inputLayerSize);
+    DL("HIDDEN LAYER SIZE : " << hiddenLayerSize);
+    DL("OUTPUT LAYER SIZE : " << outputLayerSize);
+    
 }
 
 void NeuralNetwork::forwardPropagation(const std::vector<double> &inputData){
@@ -39,6 +46,7 @@ void NeuralNetwork::forwardPropagation(const std::vector<double> &inputData){
     //input -> hidden
     input = inputData;
 
+    #pragma omp parallel for
     for(int i = 0 ; i < hiddenLayerSize ; i++){
         hidden[i] = biasHidden[i]; //bias degerini direkt kopyaladik
         for(int j = 0 ; j < inputLayerSize ; j++){
@@ -49,6 +57,7 @@ void NeuralNetwork::forwardPropagation(const std::vector<double> &inputData){
 
     //(2)HIDDEN LAYERDAN OUTPUT LAYERA GECIS ==> 1 output seciliyor tum hiddenler icin hesaplama yapilip sigmoidden geciriliyor
     //hidden -> output
+    #pragma omp parallel for
     for(int i = 0 ; i < outputLayerSize ; i++){
         output[i] = biasOutput[i];
         for(int j = 0 ; j < hiddenLayerSize ; j++){
@@ -61,6 +70,7 @@ void NeuralNetwork::forwardPropagation(const std::vector<double> &inputData){
 void NeuralNetwork::backwardPropagation(std::vector<double> &outputData,std::vector<double> &hiddenData,const std::vector<double> &target){
     //(1)OUTPUT->HIDDEN
     std::vector<double> errorOutput(outputLayerSize,0.);
+    #pragma omp parallel for
     for(int i = 0 ; i < outputLayerSize ; i++){
         errorOutput[i] = (target[i] - outputData[i]) * RandomMath::derOut_sigmoidExp(outputData[i]);
     }
@@ -72,8 +82,9 @@ void NeuralNetwork::backwardPropagation(std::vector<double> &outputData,std::vec
         h1          o1      h1_o1_err + h1_o2_err = h1_total_err
         h2          o2      h2_o1_err + h2_o2_err = h2_total_err
         ...         ...
-    */ 
+    */
     std::vector<double> errorHidden(hiddenLayerSize,0.);
+    #pragma omp parallel for
     for(int i = 0 ; i < hiddenLayerSize ; i++){
         double hi_total_err = 0.0f;
         for(int j = 0 ; j < outputLayerSize ; j++){
@@ -84,12 +95,14 @@ void NeuralNetwork::backwardPropagation(std::vector<double> &outputData,std::vec
 
     //learning burada gerceklesiyor esasinda eski weightsleri silmeden guncelleme:
     //(3)HIDDEN->OUTPUT WEIGHTS guncelleme
+    #pragma omp parallel for
     for(int i = 0 ; i < hiddenLayerSize ; i++)
         for(int j = 0 ; j < outputLayerSize ; j++){
             weightHidden_Output[i][j] += this->learningRate * errorOutput[j] * hiddenData[i]; 
         }
 
     //(4)INPUT->HIDDEN WEIGHTS guncelleme
+    #pragma omp parallel for
     for(int i = 0 ; i < inputLayerSize ; i++){
         for(int j = 0 ; j < hiddenLayerSize ; j++){ //tum hidden layer noronlari ile isleniyor 1 input noronu
             weightInput_Hidden[i][j] += this->learningRate * errorHidden[j] * input[i];
@@ -176,7 +189,7 @@ std::vector<double>& NeuralNetwork::getOutputs(){
     return this->output;
 }
 
-void NeuralNetwork::predictImage(const std::string &pathfile,bool normalized){
+void NeuralNetwork::predictImage(const std::string &pathfile,bool normalized,std::vector<char> &text){
     DL("TAHMIN EDILECEK DOSYA : " << pathfile);
     bmpReader reader(pathfile);
     auto v = reader.readConvert(normalized);
@@ -187,10 +200,10 @@ void NeuralNetwork::predictImage(const std::string &pathfile,bool normalized){
         std::max_element(output.begin(),output.end())   //cikti vektorunun icindeki en buyuk iterator
     );
 
-    predictIndexSwitch(predictIndex);
+    predictIndexSwitch(predictIndex,text);
 }
 
-void NeuralNetwork::predictImage(std::vector<double> rawImageData){
+void NeuralNetwork::predictImage(std::vector<double> rawImageData,std::vector<char> &text){
     forwardPropagation(rawImageData);
 
     int predictIndex = std::distance(                   //indexi en buyuk olanin 
@@ -198,13 +211,14 @@ void NeuralNetwork::predictImage(std::vector<double> rawImageData){
         std::max_element(output.begin(),output.end())   //cikti vektorunun icindeki en buyuk iterator
     );
 
-   predictIndexSwitch(predictIndex);
+   predictIndexSwitch(predictIndex,text);
 }
 
-void NeuralNetwork::predictIndexSwitch(int predictIndex){
+void NeuralNetwork::predictIndexSwitch(int predictIndex,std::vector<char> &text){
     if (predictIndex >= 0 && predictIndex <= 25) {
-        char predictedChar = 'A' + predictIndex;
-        std::cout << predictedChar << "\n";
+        char predictedChar = 'a' + predictIndex;
+        text.push_back(predictedChar);
+        std::cout << predictedChar << " ";
     } else {
         std::cerr << "KARAKTER TESPIT BASARISIZ!\n";
     }
@@ -222,7 +236,7 @@ void NeuralNetwork::fillRange(std::vector<int> &sortedVec,int startValue,int inc
 void NeuralNetwork::fit(const std::vector<std::vector<double>> &inputDataRaw,
                         const std::vector<std::vector<double>> &oneHotLabels,int totalEpoch){
     for(int epoch = 0; epoch < totalEpoch; ++epoch){
-        if(epoch % PRINT_COUNT == 0)
+        if(epoch % PRINT_COUNT_FIT == 0)
             std::cout << "\nEPOCH: " << epoch+1 << "/" << totalEpoch << std::flush;
 
     

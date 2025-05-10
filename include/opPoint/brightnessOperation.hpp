@@ -6,9 +6,10 @@
 class BrightnessOp : public PointOperation{
 private:
     int brightVal;
+    bool isNormalize;
     
 public:
-    BrightnessOp(int brightVal);
+    BrightnessOp(int brightVal,bool isNormalize);
 
     int getWidth() override;
     int getHeight() override;

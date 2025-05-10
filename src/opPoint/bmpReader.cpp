@@ -8,7 +8,7 @@ bmpReader::bmpReader(const std::string &filePath){
         DL("DOSYA ACILAMADI !");
     }
     else{
-        if(cx % 50 == 0)
+        if(cx % 1000 == 0)
             DL("DOSYA BASARIYLA ACILDI ! : NO_" << cx+1);
         cx++;
     }
@@ -35,9 +35,9 @@ std::vector<double> bmpReader::readConvert(bool normalized){
             unsigned char pixel;                //seklinde okuyarak bmp ters olarak tutuyor vectore atma
             file.read(reinterpret_cast<char*>(&pixel),1);
             if(!normalized)
-            this->pixelData.emplace_back(static_cast<double>(pixel));
+                this->pixelData.emplace_back(static_cast<double>(pixel));
             else
-            this->pixelData.emplace_back(static_cast<double>(pixel) / 255.0);
+                this->pixelData.emplace_back(static_cast<double>(pixel) / 255.0);
         }
     }
     

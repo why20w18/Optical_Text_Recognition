@@ -4,7 +4,18 @@ PROJECT(OCR_PROGRAM)
 #CXX STANDARTLARI VE COMPILE MODLARINI YAPILANDIRMA
 SET(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wextra -Wall -g")
-SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wextra -Wall -O3 -march=native	-funroll-loops -ffast-math -fomit-frame-pointer -flto")
+SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} \
+-Wextra \
+-Wall \
+-O3 \
+-march=znver3 \
+-funroll-loops \
+-ffast-math \
+-fomit-frame-pointer \
+-flto \
+-fprefetch-loop-arrays \
+-fopenmp \
+")
 
 #-fno-fast-math
 #-ffast-math
@@ -25,10 +36,13 @@ SET(PROGRAM_SRC
 
     ${DIZIN_SRC}/model/neuralNetwork.cpp
     ${DIZIN_SRC}/model/loadDataset.cpp
+    ${DIZIN_SRC}/model/segment.cpp 
+
     
     ${DIZIN_SRC}/opPoint/bmpReader.cpp
     ${DIZIN_SRC}/opPoint/brightnessOperation.cpp
     ${DIZIN_SRC}/opPoint/thresholdOperation.cpp
+    
 
 
 
@@ -39,10 +53,11 @@ SET(PROGRAM_INCLUDE
     ${DIZIN_INCLUDE}/debugOCR.hpp 
     ${DIZIN_INCLUDE}/opRandomMath.hpp
     ${DIZIN_INCLUDE}/modelProp.hpp
-
+    
 
     ${DIZIN_INCLUDE}/model/neuralNetwork.hpp
     ${DIZIN_INCLUDE}/model/loadDataset.hpp
+    ${DIZIN_INCLUDE}/model/segment.hpp
 
 
     ${DIZIN_INCLUDE}/opPoint/bmpReader.hpp

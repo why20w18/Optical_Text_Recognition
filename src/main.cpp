@@ -3,6 +3,7 @@
 
 #include "../include/model/neuralNetwork.hpp"
 #include "../include/model/loadDataset.hpp"
+#include "../include/model/segment.hpp"
 
 #include "../include/opPoint/bmpReader.hpp"
 #include "../include/opPoint/brightnessOperation.hpp"
@@ -44,8 +45,8 @@ int main(){
     //LoadDataset loader(DATASET_AB_POSXY,inputDataRaw,oneHotLabels,ann.getOutputLayerSize());
     //std::string imgPath = DATASET_AB_POSXY"/b_013.bmp";
     
-    LoadDataset loader(DATASETS AZ_EN,inputDataRaw,oneHotLabels,NORMALIZE_READ);
-    std::string imgPath = DATASETS AZ_EN"/k_013.bmp";
+    LoadDataset loader(DATASETS"/dataset",inputDataRaw,oneHotLabels,NORMALIZE_READ,THRESHOLD_READ,OUTPUT_LAYER);
+    std::string imgPath = DATASETS AZ_EN"/h_011.bmp";
 
 
     DL("inputData SIZE: " << inputDataRaw.size());
@@ -77,19 +78,57 @@ int main(){
     std::vector<double> rawImage = testFile.readConvert(NORMALIZE_READ);
 
     //image pre process
-    BrightnessOp bop(0);
+    BrightnessOp bop(0,NORMALIZE_OP);
     bop.initalize(rawImage, testFile.getWidth(), testFile.getHeight());
     bop.applyPointOperation();
-    ThresholdOp top(90);
+    ThresholdOp top(128,NORMALIZE_OP);
     top.initalize(rawImage, testFile.getWidth(), testFile.getHeight());
     top.applyPointOperation();
 
-    ann.predictImage(rawImage);
+    std::vector<char> text;
+    ann.predictImage(rawImage,text);
+    
+    for(char ch : text)
+        printf("%c",ch);
+    printf("\n");
 
     //(2)DOGRUDAN PATH VER ON ISLEME YAPMADAN TAHMIN ETTIR
     //ann.predictImage(imgPath);
 
 
+    //KULLANICI METNI VERME
+    std::vector<char> text_1;
+    bmpReader userImageFile("/home/archw/packs/imgProcess/datasets/userImages/hello_world.bmp");
+    std::vector<double> userRawImage = userImageFile.readConvert(NORMALIZE_READ);
+
+    if(THRESHOLD_READ){
+        ThresholdOp threshold(THRESHOLD_DATASET_USER_PARAMS,NORMALIZE_OP);
+        threshold.initalize(userRawImage,userImageFile.getWidth(),userImageFile.getHeight());
+        threshold.applyPointOperation();
+        userRawImage = threshold.getRawPixelData();
+    }
+    
+    Segment segment(userRawImage,userImageFile.getWidth(),userImageFile.getHeight());
+    std::cout << "WIDTH : " << userImageFile.getWidth() << " HEIGHT : " << userImageFile.getHeight() << "\n"; 
+    std::vector<std::vector<double>> segmentedChar = segment.getSegmentedChar();
+    
+    std::cout << "USER RAW IMAGE : " << std::endl;
+    //ann.print1D(userRawImage);
+
+    std::cout << "segment sayisi : " << segment.getCountBlock() << std::endl;
+    
+    int i = 0;
+    for(auto oneGrid : segmentedChar){
+        if(i < segment.getCountBlock()){
+            ann.predictImage(oneGrid,text_1);
+            i++;
+        }
+    }
+    //metin puntosu 17 ile yazilmis olmali datasetimiz bu sekilde
+    std::cout << "\nSONUC\n\n";
+    for(char ch : text_1)
+        printf("%c",ch);
+    printf("\n");
 
     return 0x0;
 }

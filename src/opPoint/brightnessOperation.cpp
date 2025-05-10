@@ -1,14 +1,19 @@
 #include "../../include/opPoint/brightnessOperation.hpp"
 
 
-BrightnessOp::BrightnessOp(int brightVal) : brightVal(brightVal){}
+BrightnessOp::BrightnessOp(int brightVal,bool isNormalize) : brightVal(brightVal) , isNormalize(isNormalize){}
 
 void BrightnessOp::applyPointOperation(){
     int totalPixel = width * height;
     DL("total pixel brightness : " << totalPixel);
-    for(int i = 0 ; i < totalPixel ; i++){
-        this->pixelData[i] = PointOperation::scaleRange<double>(this->pixelData[i]+brightVal,0,255);
-    }
+    if(!isNormalize)
+        for(int i = 0 ; i < totalPixel ; i++){
+            this->pixelData[i] = PointOperation::scaleRange<double>(this->pixelData[i]+brightVal,0,255);
+        }
+    else
+        for(int i = 0 ; i < totalPixel ; i++)
+            this->pixelData[i] = PointOperation::scaleRange<double>((this->pixelData[i]+(brightVal/255)),0,1);
+        
 }
 
 
