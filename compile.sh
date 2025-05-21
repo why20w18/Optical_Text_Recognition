@@ -22,6 +22,7 @@ elif [ "$1" == "debug-compile" ] || [ "$1" == "dc" ]; then
     make
 
 elif [ "$1" == "run" ] || [ "$1" == "r" ]; then 
+    date
     ./build/OCR_PROGRAM
 
 fi

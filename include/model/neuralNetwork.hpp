@@ -74,8 +74,9 @@ public:
                 
     void fillRange(std::vector<int> &sortedVec,int startValue,int increment = 1);
     
-    void saveModel(); //
+    void saveModel();
     void loadModel(const std::string &path);
+    void printWeights();
 
     template<typename T>
     void print1D(const std::vector<T> &v){

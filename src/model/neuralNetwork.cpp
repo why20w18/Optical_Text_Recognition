@@ -19,7 +19,7 @@ NeuralNetwork::NeuralNetwork(double learningRate){
 
     //(2) bias degerlerini random -1 ve 1 arasinda baslatma
     for(int i = 0 ; i < hiddenLayerSize ; i++)
-        biasHidden[i] = RandomMath::getRandom();
+        biasHidden[i] = RandomMath::getRandom(-1,1);
 
     for(int i = 0 ; i < outputLayerSize ; i++)
         biasOutput[i] = RandomMath::getRandom(-1,1);
@@ -33,7 +33,6 @@ NeuralNetwork::NeuralNetwork(double learningRate){
     for(int i = 0 ; i < hiddenLayerSize ; i++)
         for(int j = 0 ; j < outputLayerSize ; j++)
             weightHidden_Output[i][j] = RandomMath::getRandom();
-
     DL("NEURAL NETWORK AGIRLIKLARI VE BIASLARI RANDOM SEKILDE BASLATILDI");
     DL("INPUT  LAYER SIZE : " << inputLayerSize);
     DL("HIDDEN LAYER SIZE : " << hiddenLayerSize);
@@ -70,7 +69,7 @@ void NeuralNetwork::forwardPropagation(const std::vector<double> &inputData){
 void NeuralNetwork::backwardPropagation(std::vector<double> &outputData,std::vector<double> &hiddenData,const std::vector<double> &target){
     //(1)OUTPUT->HIDDEN
     std::vector<double> errorOutput(outputLayerSize,0.);
-    #pragma omp parallel for
+    #pragma omp parallel for 
     for(int i = 0 ; i < outputLayerSize ; i++){
         errorOutput[i] = (target[i] - outputData[i]) * RandomMath::derOut_sigmoidExp(outputData[i]);
     }
@@ -84,7 +83,7 @@ void NeuralNetwork::backwardPropagation(std::vector<double> &outputData,std::vec
         ...         ...
     */
     std::vector<double> errorHidden(hiddenLayerSize,0.);
-    #pragma omp parallel for
+    #pragma omp parallel for collapse(2)
     for(int i = 0 ; i < hiddenLayerSize ; i++){
         double hi_total_err = 0.0f;
         for(int j = 0 ; j < outputLayerSize ; j++){
@@ -95,14 +94,14 @@ void NeuralNetwork::backwardPropagation(std::vector<double> &outputData,std::vec
 
     //learning burada gerceklesiyor esasinda eski weightsleri silmeden guncelleme:
     //(3)HIDDEN->OUTPUT WEIGHTS guncelleme
-    #pragma omp parallel for
+    #pragma omp parallel for collapse(2)
     for(int i = 0 ; i < hiddenLayerSize ; i++)
         for(int j = 0 ; j < outputLayerSize ; j++){
             weightHidden_Output[i][j] += this->learningRate * errorOutput[j] * hiddenData[i]; 
         }
 
     //(4)INPUT->HIDDEN WEIGHTS guncelleme
-    #pragma omp parallel for
+    #pragma omp parallel for collapse(2)
     for(int i = 0 ; i < inputLayerSize ; i++){
         for(int j = 0 ; j < hiddenLayerSize ; j++){ //tum hidden layer noronlari ile isleniyor 1 input noronu
             weightInput_Hidden[i][j] += this->learningRate * errorHidden[j] * input[i];
@@ -111,10 +110,12 @@ void NeuralNetwork::backwardPropagation(std::vector<double> &outputData,std::vec
     
     //eski bias degerlerini silmeden guncelleme:
     //(4)OUTPUT BIAS
+    #pragma omp parallel for 
     for(int i = 0 ; i < outputLayerSize ; i++)
         biasOutput[i] += this->learningRate * errorOutput[i];
 
     //(5)HIDDEN BIAS
+    #pragma omp parallel for
     for(int i = 0 ; i < hiddenLayerSize ; i++){
         biasHidden[i] += this->learningRate * errorHidden[i];
     }
@@ -248,5 +249,80 @@ void NeuralNetwork::fit(const std::vector<std::vector<double>> &inputDataRaw,
         for (int randomIndex : indices) {
             train(inputDataRaw[randomIndex], oneHotLabels[randomIndex]);
         }
+
+        //this->learningRate *= 0.99;
     }
+}
+
+void NeuralNetwork::printWeights(){
+    for(auto &r : this->weightInput_Hidden){
+        for(int i = 0 ; i < r.size() ; i++){
+            std::cout << r[i] << " ";
+        }
+    }
+    
+    for(auto &r : this->weightHidden_Output){
+        for(int i = 0 ; i < r.size() ; i++){
+            std::cout << r[i] << " ";
+        }
+    }
+}
+
+void NeuralNetwork::saveModel(){
+    std::string path = SAVE_PATH;
+    std::ofstream out(path, std::ios::binary);
+    if(!out.is_open()){
+        std::cerr << "MODEL KAYIT ACILAMADI ! : " << path << std::endl;
+        return;
+    }
+
+    out.write(reinterpret_cast<char*>(&inputLayerSize), sizeof(inputLayerSize));
+    out.write(reinterpret_cast<char*>(&hiddenLayerSize), sizeof(hiddenLayerSize));
+    out.write(reinterpret_cast<char*>(&outputLayerSize), sizeof(outputLayerSize));
+
+    for(auto& row : weightInput_Hidden)
+        out.write(reinterpret_cast<char*>(row.data()), row.size() * sizeof(double));
+
+    for(auto& row : weightHidden_Output)
+        out.write(reinterpret_cast<char*>(row.data()), row.size() * sizeof(double));
+
+    out.write(reinterpret_cast<char*>(biasHidden.data()), biasHidden.size() * sizeof(double));
+    out.write(reinterpret_cast<char*>(biasOutput.data()), biasOutput.size() * sizeof(double));
+
+    out.close();
+    std::cout << "MODEL KAYDEDILDI ! : " << path << std::endl;
+}
+
+void NeuralNetwork::loadModel(const std::string &path){
+    std::ifstream in(path, std::ios::binary);
+    if (!in.is_open()) {
+        std::cerr << "MODEL DOSYASI BULUNAMADI ! : " << path << std::endl;
+        return;
+    }
+
+    in.read(reinterpret_cast<char*>(&inputLayerSize), sizeof(inputLayerSize));
+    in.read(reinterpret_cast<char*>(&hiddenLayerSize), sizeof(hiddenLayerSize));
+    in.read(reinterpret_cast<char*>(&outputLayerSize), sizeof(outputLayerSize));
+
+    input.resize(inputLayerSize);
+    hidden.resize(hiddenLayerSize);
+    output.resize(outputLayerSize);
+
+    weightInput_Hidden.resize(inputLayerSize, std::vector<double>(hiddenLayerSize));
+    weightHidden_Output.resize(hiddenLayerSize, std::vector<double>(outputLayerSize));
+
+    biasHidden.resize(hiddenLayerSize);
+    biasOutput.resize(outputLayerSize);
+
+    for (int i = 0; i < inputLayerSize; ++i)
+        in.read(reinterpret_cast<char*>(weightInput_Hidden[i].data()), hiddenLayerSize * sizeof(double));
+
+    for (int i = 0; i < hiddenLayerSize; ++i)
+        in.read(reinterpret_cast<char*>(weightHidden_Output[i].data()), outputLayerSize * sizeof(double));
+
+    in.read(reinterpret_cast<char*>(biasHidden.data()), hiddenLayerSize * sizeof(double));
+    in.read(reinterpret_cast<char*>(biasOutput.data()), outputLayerSize * sizeof(double));
+
+    in.close();
+    std::cout << "MODEL YÜKLENDİ ! : " << path << std::endl;
 }

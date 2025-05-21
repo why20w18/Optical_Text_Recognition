@@ -9,7 +9,7 @@
 #include "../include/opPoint/brightnessOperation.hpp"
 #include "../include/opPoint/thresholdOperation.hpp"
 
-
+void printResult(const char *arr);
 
 int main(){
 ////////////////////////////////////////////////
@@ -45,7 +45,9 @@ int main(){
     //LoadDataset loader(DATASET_AB_POSXY,inputDataRaw,oneHotLabels,ann.getOutputLayerSize());
     //std::string imgPath = DATASET_AB_POSXY"/b_013.bmp";
     
-    LoadDataset loader(DATASETS"/dataset",inputDataRaw,oneHotLabels,NORMALIZE_READ,THRESHOLD_READ,OUTPUT_LAYER);
+    LoadDataset loader(DATASETS"/dataset_posxy_az_en",inputDataRaw,oneHotLabels,NORMALIZE_READ,THRESHOLD_READ,OUTPUT_LAYER);
+    //LoadDataset loader(DATASETS"/dataset_2_font",inputDataRaw,oneHotLabels,NORMALIZE_READ,THRESHOLD_READ,OUTPUT_LAYER);
+    
     std::string imgPath = DATASETS AZ_EN"/h_011.bmp";
 
 
@@ -64,7 +66,7 @@ int main(){
 
     //EGITIM
     ann.fit(inputDataRaw,oneHotLabels,TOTAL_EPOCH_TRAIN);
-  
+    //ann.loadModel(SAVE_PATH);
 
     //TAHMIN DEGERLERI
     ann.printPredictTest(inputDataRaw,oneHotLabels,10);
@@ -124,11 +126,31 @@ int main(){
             i++;
         }
     }
+
     //metin puntosu 17 ile yazilmis olmali datasetimiz bu sekilde
     std::cout << "\nSONUC\n\n";
-    for(char ch : text_1)
-        printf("%c",ch);
+    char arr[11];
+    short x = 0;
+    for(char ch : text_1){
+        arr[x] = ch;
+        printf("%c",arr[x]);
+        x++;
+    }
     printf("\n");
+    arr[x] = '\n';
+    printResult(arr);
+    ann.saveModel();
+
 
     return 0x0;
+}
+
+void printResult(const char *arr){
+    std::cout << "HIDDEN_LAYER      :   " << HIDDEN_LAYER << std::endl; 
+    std::cout << "LEARNING_RATE     :   " << LEARNING_RATE << std::endl;
+    std::cout << "TOTAL_EPOCH_TRAIN :   " << TOTAL_EPOCH_TRAIN << std::endl;
+    std::cout << "THRESHOLD_READ    :   " << THRESHOLD_READ << std::endl;
+    std::cout << "NORMALIZE_READ    :   " << NORMALIZE_READ << std::endl;
+    std::cout << "CIKMASI GEREKEN   :   " << "helloworld" << std::endl;
+    std::cout << "SONUC             :   " << arr << std::endl;
 }

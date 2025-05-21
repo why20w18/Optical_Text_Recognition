@@ -14,46 +14,39 @@ Segment::Segment(std::vector<double> &rawImage,int imageWidth,int imageHeight,in
 }
 
 void Segment::segmentImage(){
-    // Calculate the number of grids in each direction
-    int totalGridRowCount = imageHeight / gridSize;  // Number of grid rows
-    int totalGridColCount = imageWidth / gridSize;   // Number of grid columns
+    int totalGridRowCount = imageHeight / gridSize;  
+    int totalGridColCount = imageWidth / gridSize;   
     
-    countBlock = 0; // Initialize the counter for blocks containing black pixels
+    countBlock = 0; 
 
     for(int gridCurrentRow = 0; gridCurrentRow < totalGridRowCount; gridCurrentRow++){
         for(int gridCurrentCol = 0; gridCurrentCol < totalGridColCount; gridCurrentCol++){
             std::vector<double> block;
             bool hasBlack = false;
 
-            // Process each pixel in the current grid
             for(int y = 0; y < gridSize; ++y){
                 for(int x = 0; x < gridSize; ++x){
                     int globalY = gridCurrentRow * gridSize + y;
                     int globalX = gridCurrentCol * gridSize + x;
                     
-                    // Calculate index in the 1D array
                     int idx = globalY * imageWidth + globalX;
                     
-                    // Bounds checking
                     if (idx >= rawImage.size() || idx < 0) {
-                        // Add a placeholder or default value if out of bounds
-                        block.push_back(1.0); // Adding white pixel as default
+                        block.push_back(1.0); 
                         continue;
                     }
 
                     double val = rawImage[idx];
                     block.push_back(val);
 
-                    // Check if the pixel is black (assuming values < 100 are considered "black")
                     if (val < SEGMENT_THRESHOLD)
                         hasBlack = true;
                     }
             }
 
-            // Only add blocks that contain black pixels to segmentedChar
             if(hasBlack){
                 segmentedChar.push_back(block);
-                countBlock++; // Increment counter for blocks with black pixels
+                countBlock++; 
             }
         }
     }
@@ -61,11 +54,11 @@ void Segment::segmentImage(){
 
 
 std::vector<std::vector<double>> Segment::getSegmentedChar(){
-    this->segmentedChar.clear(); // Önce temizle
+    this->segmentedChar.clear(); 
     auto [top, bottom] = findVerticalBounds();
 
     if (top == -1 || bottom == -1)
-        return segmentedChar; // Boş
+        return segmentedChar;
 
     auto bounds = findCharacterBounds(top, bottom);
 
@@ -81,20 +74,19 @@ std::vector<std::vector<double>> Segment::getSegmentedChar(){
             }
         }
 
-        // Karakteri 2D yap
+ 
         auto char2D = to2D(character, charWidth, charHeight);
         
-        // 28x28'e resize et
+
         auto resized2D = resizeTo28x28(char2D, charWidth, charHeight);
 
-        // Tekrar 1D yap
+
         auto resizedFlat = flatten(resized2D);
 
-        // Segment listesine ekle
         segmentedChar.push_back(resizedFlat);
     }
 
-    countBlock = segmentedChar.size(); // Güncelle
+    countBlock = segmentedChar.size(); 
     return segmentedChar;
 }
 
@@ -112,7 +104,7 @@ std::pair<int, int> Segment::findVerticalBounds() {
         for (int x = 0; x < imageWidth; ++x) {
             rowSum += rawImage[y * imageWidth + x];
         }
-        if (rowSum < imageWidth * 0.95) { // satırda siyah varsa
+        if (rowSum < imageWidth * 0.95) { 
             if (top == -1) top = y;
             bottom = y;
         }
@@ -120,7 +112,6 @@ std::pair<int, int> Segment::findVerticalBounds() {
     return {top, bottom};
 }
 
-// Dikey projeksiyon: karakter aralıklarını bul
 std::vector<std::pair<int, int>> Segment::findCharacterBounds(int top, int bottom) {
     std::vector<std::pair<int, int>> bounds;
     bool inChar = false;
@@ -145,7 +136,6 @@ std::vector<std::pair<int, int>> Segment::findCharacterBounds(int top, int botto
         }
     }
 
-    // son harfi ekle
     if (inChar)
         bounds.emplace_back(start, imageWidth - 1);
 

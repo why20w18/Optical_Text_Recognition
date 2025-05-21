@@ -3,12 +3,18 @@ PROJECT(OCR_PROGRAM)
 
 #CXX STANDARTLARI VE COMPILE MODLARINI YAPILANDIRMA
 SET(CMAKE_CXX_STANDARD 17)
+
+
+#compiler
+#set(CMAKE_CXX_COMPILER "clang++" CACHE STRING "C++ compiler" FORCE)
+
 SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wextra -Wall -g")
 SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} \
 -Wextra \
 -Wall \
 -O3 \
--march=znver3 \
+-march=native \
+-mtune=native \
 -funroll-loops \
 -ffast-math \
 -fomit-frame-pointer \

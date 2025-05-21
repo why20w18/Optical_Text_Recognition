@@ -28,8 +28,8 @@ public:
     int getCountBlock();
 
     //project
-    std::pair<int, int> findVerticalBounds(); // yatay projeksiyon → satır aralığı
-    std::vector<std::pair<int, int>> findCharacterBounds(int top, int bottom); // dikey projeksiyon → harf aralığı
+    std::pair<int, int> findVerticalBounds(); //yatay projeksiyon
+    std::vector<std::pair<int, int>> findCharacterBounds(int top, int bottom); //dikey projeksiyon
     std::vector<std::vector<double>> to2D(const std::vector<double> &flat, int width, int height);
     std::vector<std::vector<double>> resizeTo28x28(const std::vector<std::vector<double>> &input, int inW, int inH);
     std::vector<double> flatten(const std::vector<std::vector<double>> &mat);
