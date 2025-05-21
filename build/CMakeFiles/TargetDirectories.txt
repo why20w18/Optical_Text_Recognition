@@ -1,3 +1,0 @@
-/home/archw/packs/imgProcess/build/CMakeFiles/OCR_PROGRAM.dir
-/home/archw/packs/imgProcess/build/CMakeFiles/edit_cache.dir
-/home/archw/packs/imgProcess/build/CMakeFiles/rebuild_cache.dir
